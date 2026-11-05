@@ -28,4 +28,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 |---|---|---|---|
 | 2026-11-04 | opencode (GLM) | planning + spec v1.0 | prompts/2026-11-04-spec-v1.md |
 | 2026-11-05 | opencode (GLM) | G0 workshop baseline (steps 1–2), source research | prompts/2026-11-05-workshop-baseline.md |
-| 2026-11-05 | Codex | G0/G1/G2 build work | (append as sessions happen) |
+| 2026-11-05 | Codex | G0 workshop baseline and G1 ARBITRARY spike | prompts/2026-11-05-g0-g1-codex.md |

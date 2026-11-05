@@ -15,6 +15,7 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## G0 (workshop baseline — pre-running before spec lock)
 
+- 2026-11-05 · step_1_check BLOCKED · gateway faucet result: `{ok:false, code:"FUNDING_FAILED", rule:null, hint:"each address can ask once an hour; use the Faucet button in the explorer with another address, or ask the host", message:"The faucet refused 0xbBE08746A050b76d392F1276D5fBD3983a1279AB: The faucet is empty"}` · do not proceed to steps 2–13 until a faucet-funded participant key is available.
 - 2026-11-05 · step_1_check PASS · participant 0x3b7CdFf8ED99272338abF93A3B31b13421f779b1,
   funded 1 ETH, gateway alive, chainId 1337.
 - 2026-11-05 · step_2_tx_first PASS · tx 0xd990332987d900ef6fb5bdedad7b24df61cadc674c08d45c88a9749813f987e8

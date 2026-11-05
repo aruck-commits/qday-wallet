@@ -5,6 +5,7 @@ contracts/out/
 contracts/cache/
 broadcast/
 contract-artifacts/
+tooling/
 
 # environment & secrets (never commit funded keys)
 .env

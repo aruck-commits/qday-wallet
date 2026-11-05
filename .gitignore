@@ -1,0 +1,25 @@
+# dependencies / build
+node_modules/
+app/dist/
+contracts/out/
+contracts/cache/
+broadcast/
+contract-artifacts/
+
+# environment & secrets (never commit funded keys)
+.env
+.env.*
+!.env.example
+*.key
+*.keyfile
+.workshop-state.json
+.env.arkiv.local
+
+# test artifacts
+.gas-snapshot
+coverage/
+coverage.json
+
+# OS / editor
+.DS_Store
+Thumbs.db

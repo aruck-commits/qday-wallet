@@ -30,6 +30,7 @@ const ensLimitation = "PQ write unavailable: the default resolver requires ROLE_
 const evidence = {
   generatedAt: new Date().toISOString(),
   mode: "DRY RUN",
+  protocol: { name: "ML-DSA-44", publicKeyBytes: "1,312 B", secretKeyBytes: "2,560 B", signatureBytes: "2,420 B", frameMode: "VERIFY", sigScheme: "ARBITRARY" },
   hero: {
     headline: "The wallet is the identity.",
     subtitle: "Quantum-safe authorization, shown through captured mempool evidence.",

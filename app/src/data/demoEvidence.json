@@ -1,6 +1,14 @@
 {
-  "generatedAt": "2026-11-06T13:20:30.405Z",
+  "generatedAt": "2026-11-06T13:29:57.495Z",
   "mode": "DRY RUN",
+  "protocol": {
+    "name": "ML-DSA-44",
+    "publicKeyBytes": "1,312 B",
+    "secretKeyBytes": "2,560 B",
+    "signatureBytes": "2,420 B",
+    "frameMode": "VERIFY",
+    "sigScheme": "ARBITRARY"
+  },
   "hero": {
     "headline": "The wallet is the identity.",
     "subtitle": "Quantum-safe authorization, shown through captured mempool evidence.",

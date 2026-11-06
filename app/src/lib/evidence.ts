@@ -7,6 +7,7 @@ export type RawEvidence = {
 export type DemoEvidence = {
   generatedAt: string;
   mode: string;
+  protocol: { name: string; publicKeyBytes: string; secretKeyBytes: string; signatureBytes: string; frameMode: string; sigScheme: string };
   hero: { headline: string; subtitle: string; quote: string };
   demo: {
     canonical: { verdict: string; rule: string | null; rawAvailable: boolean; raw: RawEvidence };

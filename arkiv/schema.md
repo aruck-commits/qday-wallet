@@ -1,49 +1,25 @@
-# Q-Day Wallet × Arkiv — Data Schema
+# Q-Day Wallet Arkiv schema
 
-Schema tag: **`qday.migration`** · Network: Rabdi testnet (7794095) · defined via
-`@arkiv-network/sdk` `defineSchema` at script start (idempotent; schema reused if tag matches).
+Schema tag: **`qday.migration`** · Network: Rabdi testnet (chain 7794095) · defined with `defineSchema` in `scripts/arkiv_sync.ts` and `scripts/arkiv_read.ts`.
 
-## Entity (one per wallet entry)
+## Entity fields (as in code)
 
-| field | type | indexed | rationale |
+| field | type | indexed | meaning |
 |---|---|---|---|
-| `wallet` | `addr` | ✓ (indexed) | the address owning the PQ key — the registry's primary key for humans |
-| `pqPkHash` | `bytes32` | ✓ | keccak256(publicKey) — fingerprints the key without storing 1312 B on Arkiv |
-| `status` | `str` | ✓ | `ACTIVE` / `ROTATED` / `EXPIRED` / `REVOKED` |
-| `scheme` | `str` | ✓ | `"ML-DSA-44"` (fixed today; Pivot = future `ML-DSA-65/87` rows) |
-| `verifier` | `addr` | ✓ | deployed IMLDSAVerifier contract (provenance pointer) |
-| `pqKeyVersion` | `u64` | – | monotonically increasing on rotation |
-| `ensName` | `str` | – | optional; the wallet's ENSv2 name when registered |
-| `note` | `str` | – | free comment (e.g. "demo at ETHGlobal Mumbai") |
-| `swarmRef` | `str` | ✓ | Swarm reference (content hash / gateway URL) of this wallet's public migration passport on Swarm; written by the G5b flow, fetched by the Registry drawer |
+| `scheme` | string | yes | always `ML-DSA-44` today |
+| `wallet` | string (optional) | no | smart wallet address the key protects |
+| `ensName` | string (optional) | no | ENS name owned by the wallet, e.g. `qdaywallet.eth` |
+| `pqKeyVersion` | string | yes | key version as a string, starts at `0`, becomes `1` after rotation |
+| `pqPkHash` | string (optional) | no | fingerprint of the ML-DSA public key |
+| `status` | string | yes | e.g. `scaffold`, `rotated` |
+| `swarmRef` | string (optional) | no | Swarm reference of the migration passport |
 
-## Lifecycle
+## Ownership and expiry
+- **Owner:** the relayer account `0xD73977DdE03abAB3984cFb1e0A2d7629a693A4a1`. The entity is created and patched by that account; this is a demo, not user-owned data.
+- **Expiry:** set to 30 days at creation (`ExpirationTime.fromDays(30)`). Not verified at expiry.
 
-- **create** on first successful exposure (deploy or first PQ spend): status `ACTIVE`,
-  `pqKeyVersion 1`; entity set to expire in **30 days** (matches the 1-day unstake delay
-  timescale of migration; snapshot artifacts shouldn't live forever).
-- **patch** on rotation: same entity, fields → `status ROTATED`, new `pqPkHash`,
-  `pqKeyVersion++`, `note` gains `rotated: <date>`, and `swarmRef` points at the new passport
-  version on Swarm (old passports stay readable — content-addressed). History is NOT
-  per-entity — versions are rows-addressable by query on (wallet, pqKeyVersion).
-- **expiry:** native Arkiv TTL — UI renders countdown from entity metadata; `EXPIRED` shown
-  when past (query-time distinction, no write needed).
-- **REVOKED** (defense scenario demo): wallet emits a PQ-authorized revoke via executePq then
-  patches the registry — shows the registry can reflect *bad* states too (honesty feature).
+## Queries we run
+- `scheme = "ML-DSA-44"` (returns 1 entity today), run by `yarn arkiv:read`.
 
-## Queries the UI runs
-
-1. `select().from('qday.migration').ownedBy(wallet.wrapping?.address ?? relayer)` — dashboard.
-2. filtered: `status eq 'ACTIVE' and scheme eq 'ML-DSA-44'` — live roster + watch feed.
-3. by wallet+version for the rotation timeline (S4 screen).
-4. `swarmRef` → fetch + render the migration passport (Swarm GET) in the Registry detail
-   drawer — the Arkiv + Swarm bonus read path (G5b).
-
-## Ownership model
-
-Entities are owned by the **Arkiv wallet SDK key derived from the relayer/builder EOA**
-(demo constraint: onchain PKI doesn't exist to let metagraph-external smart contracts own
-entities). Each create/patch is linked to a tx hash in the UI ("who wrote this"), and writes
-only happen via our `arkiv:sync` path after a PQ event lands on-chain — so an attacker could
-forge entity *fields* only by holding the relayer key; the docs note this and the why-arkiv
-doc carries the mitigation story (registry is a twin, chain is truth).
+## Known mismatch we are fixing
+- Earlier drafts listed field types we never used (`addr`, `bytes32`) and statuses we never set (`ACTIVE`, `EXPIRED`, `REVOKED`). The table above is the source of truth.

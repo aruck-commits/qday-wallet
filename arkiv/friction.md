@@ -1,38 +1,25 @@
-# What made Arkiv genuinely interesting (or painful) to use
+# Friction with Arkiv: what we hit, what we didn't
 
-> Entry for the Arkiv team. Honest notes gathered while building, not PR copy. [Format
-> remains; contents appended after each real integration session at G5.]
+Honest notes from building Q-Day Wallet at ETHGlobal Mumbai. Every item below comes from a command we ran; we give the commands so you can reproduce them.
 
-## Setup friction log
+## Setup
+- **Access key is required for every RPC call through `rabdi({ accessKey })`.** We had no way to run a public read in a browser without shipping a key. Workaround: we read at build time (`yarn arkiv:read`) and commit the result. Suggestion: a documented read-only, rate-limited key for public demos.
+- **Node version.** The SDK requires Node 22.10+. Our machine runs Node 24.14, so this was not a blocker, but the requirement is a hard throw at script start (`scripts/arkiv_sync.ts`). A clearer message in the docs would help.
+- **Faucet and key issuance** worked through the documented steps. We did not time the faucet round trip.
 
-- [TO COMPLETE — real timings when running G5] Faucet round trip, access-key issuance at
-  hub.arkiv.network/access-keys, RPC round-robin latency on Rabdi from the conference hall,
-  install size of `@arkiv-network/sdk`, Node version pinning (bumped us to ≥22.10).
+## Entities
+- **Create, get, patch, select all worked** with the SDK at the time of writing. Patch transaction `0xcd9c4e93…b8f5` reports status success at block 290762.
+- **Query shape that works:** `publicClient.select({ $key: true, pqKeyVersion: true, status: true }).from(schema).where(eq("scheme", "ML-DSA-44")).fetch()`. Our query returned the one entity we created.
+- **Expiry.** We set `ExpirationTime.fromDays(30)` on create. We did not verify that an entity is removed at expiry, so we make no claim about it.
 
-## First entity experience
+## Where we got stuck
+- **Reading from a browser.** `getEntity` needs the access key, so the Registry screen's live button only works if a user pastes their own key. Most judges will not do that. We show the build-time read instead.
+- **Schema drift between docs and code.** We first wrote field types from memory and had to correct them against `defineSchema` in code. A typed schema export in the docs would prevent this.
 
-- [TO COMPLETE] Time from zero to a fetched entity; the `Schema` helper DX (typed columns),
-  what felt natural vs. Wobbly (e.g. filter syntax, expired-entity behavior in queries).
+## What we did not get to
+- Watch / event feeds (we planned them, did not build them).
+- Multi-writer patterns and per-owner permissions.
 
-## What genuinely clicked (candidate talking points)
-
-- Entities as first-class **queryable objects with TTL** — no indexer needed for our
-  rotation timeline; `watch` events gave us a live feed in ~20 lines.
-- Ownership model (entity owned by a wallet address) made our "signature → write" pipeline
-  trivial to reason about.
-- Indexing choice per column (`addr`/`bytes32`/`str`) was an obvious knob, not a black box.
-
-## What we hit as rough edges
-
-- [TO COMPLETE — recorded verbatim, e.g. error strings when rate-limited without an access
-  key; any CLI/install version gotchas; WSS vs HTTPS behaviors.]
-
-## Net
-
-[TO COMPLETE] Real verdict paragraph: what Arkiv gave us that Postgres+API auth couldn't,
-in one honest sentence (see also why-arkiv.md).
-
-## Observed 2026-11-06
-
-- SDK 0.8 did not export Rabdi; SDK 1.0.1 changed writes to schema-first `createEntity(schema, values, { expiration })`, removed `jsonToPayload`, and split reads to a public client. Node 22.10+ is enforced; this run used Node 24.14.0.
-- `defineSchema("qday.migration", ...)` is client-side only: it supplies a typed `arkiv.schema` tag and has no registry transaction. Create, get, patch, then filtered select completed against Rabdi in one 19.42s script run.
+## Reproduce
+1. `yarn arkiv:read` with `.env.arkiv.local` present. Expect `resultCount: 1`.
+2. Entity `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048` on rabdi.explorer.arkiv.network.

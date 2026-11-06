@@ -21,8 +21,8 @@ import "./craft.css";
 
 const evidence = evidenceJson as DemoEvidence;
 const nav: { id: Screen; label: string }[] = [
-  { id: "home", label: "S1 / HOME" }, { id: "console", label: "S1 / COMPOSE" }, { id: "key", label: "S2 / KEY" },
-  { id: "registry", label: "S3 / REGISTRY" }, { id: "identity", label: "S4 / IDENTITY" }, { id: "architecture", label: "S5 / ARCH" }, { id: "hero", label: "S0 / HERO" },
+  { id: "hero", label: "Overview" }, { id: "home", label: "Wallet" }, { id: "console", label: "Compose" }, { id: "key", label: "Key" },
+  { id: "registry", label: "Registry" }, { id: "identity", label: "Identity" }, { id: "architecture", label: "Architecture" },
 ];
 
 function ScreenView({ screen, navigate }: { screen: Screen; navigate: (screen: Screen) => void }) {

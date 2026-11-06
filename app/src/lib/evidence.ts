@@ -24,7 +24,7 @@ export type DemoEvidence = {
     registerTx: string | null;
     explorerUrl: string | null;
     name: string;
-    pqWrite: { verdict: string; reason: string };
+    pqWrite: { verdict: string; reason: string; resolver?: string; textKey?: string; value?: string; readBack?: string; txHash?: string; explorerUrl?: string; setResolverTx?: string; setResolverUrl?: string };
     rotation: { verdict: string; reason: string };
   };
   arkiv: { entity: string | null; schema: string; swarmRef: string | null; swarmGateway: string | null; swarmByteEqual: boolean; patchTx: string | null };

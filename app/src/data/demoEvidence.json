@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T15:05:41.853Z",
+  "generatedAt": "2026-11-06T16:47:06.408Z",
   "exportMode": "live-read-only",
   "account": {
     "address": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
@@ -18,7 +18,7 @@
     "devnet": {
       "chainId": 1337,
       "participant": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
-      "lastBlock": 5167,
+      "lastBlock": 6181,
       "balanceWei": "549660836018000000",
       "balanceEth": "0.549661",
       "stakeSubject": "0xf2bae312209239cb623c23d2f131269fc5f46006",
@@ -30,7 +30,7 @@
     },
     "sepolia": {
       "chainId": 11155111,
-      "latestBlock": 12077333,
+      "latestBlock": 12077832,
       "error": null
     }
   },
@@ -100,8 +100,16 @@
     "explorerUrl": "https://sepolia.etherscan.io/tx/0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1",
     "name": "qdaywallet.eth",
     "pqWrite": {
-      "verdict": "QUEUED",
-      "reason": "PQ write unavailable: the default resolver requires ROLE_SET_TEXT; the captured eth_call found no reachable grantor. See captured proof in FINDINGS."
+      "verdict": "WRITTEN",
+      "resolver": "0x863b62fA8988Ba340C24F389FFDF568b3ccbc8e4",
+      "textKey": "pq-key",
+      "value": "sha256:0df74bba1ed130f54299f6cf7f703b54dd170ea29429665774cf9cb29b78d440",
+      "readBack": "sha256:0df74bba1ed130f54299f6cf7f703b54dd170ea29429665774cf9cb29b78d440",
+      "txHash": "0x67533e9254cda1c0e8f543d5e158076ef9b8d08a215c358460c26c15c59178bd",
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0x67533e9254cda1c0e8f543d5e158076ef9b8d08a215c358460c26c15c59178bd",
+      "setResolverTx": "0xc1c1a9cacca31c3beae15a914c0e9a3deb86aeca203f75bd2014eb6d78b11488",
+      "setResolverUrl": "https://sepolia.etherscan.io/tx/0xc1c1a9cacca31c3beae15a914c0e9a3deb86aeca203f75bd2014eb6d78b11488",
+      "reason": "executePq setText on our own Permissioned Resolver, owned by the relayer and granted to the wallet for pq-key only; read back through UniversalResolverV2."
     },
     "rotation": {
       "verdict": "QUEUED",

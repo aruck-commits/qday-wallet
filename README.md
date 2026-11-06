@@ -15,7 +15,7 @@ Q-Day Wallet is a quantum-safe smart-wallet prototype using NIST ML-DSA-44 (FIPS
 | Arkiv + Swarm | Entity `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048`; [passport reference](https://bzz.limo/bzz/81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74), [Arkiv patch tx](https://rabdi.explorer.arkiv.network/tx/0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5) |
 | Gas | Our verify average **2,664,784**; pinned reference **2,689,594**; see `docs/GAS.md` |
 
-The staked G1 admission and mined G3 PQ frame remain unavailable: the shared devnet has no connected miner peers. ENS PQ write and rotation are complete (see ENS identity). The Swarm passport now has a byte-equal public read-back and Arkiv patch evidence.
+The staked G1 admission and mined G3 PQ frame remain unproven. The latest live read saw one gateway peer; the staked ARBITRARY frame still failed validation with literal `Out Of Gas` at both the 3.2M and 6.5M declared VERIFY limits. ENS PQ write and rotation are complete (see ENS identity). The Swarm passport has a byte-equal public read-back and Arkiv patch evidence, but no postage-batch bonus claim is made.
 
 ## ENS identity (Sepolia, written and rotated)
 
@@ -31,13 +31,13 @@ Earlier notes said the write was unreachable. That was true only for the default
 
 **Why the alternative mempool.** The ML-DSA-44 check costs about 2.66M gas to verify (measured). The canonical mempool caps verification at about 100k, so a PQ-authorized frame transaction is rejected there with `MAX_VERIFY_GAS`. The captured rejection is in `docs/FINDINGS.md`.
 
-**What the code does.** `contracts/src/QDayWallet.sol` authorizes a spend by verifying an ML-DSA-44 signature over a 32-byte intent in a VERIFY frame. Keys are precomputed through `MLDSAKeyFactory` (registerA, registerT), so verification takes the fast path. Admission is submitted through `eth_sendFrameTransaction` on the sidecar gateway. The stake of 0.012 ETH is recorded in the NaiveStakingRegistry and read back with `getDepositInfo`.
+**What the code does.** `contracts/src/QDayWallet.sol` authorizes a spend by verifying an ML-DSA-44 signature over a 32-byte intent in a VERIFY frame. Keys are precomputed through `MLDSAKeyFactory` (registerA, registerT), so verification takes the fast path. Admission is submitted through `eth_sendFrameTransaction` on the sidecar gateway. The SpikeWallet stake of 0.024 ETH is recorded in the NaiveStakingRegistry and read back with `getDepositInfo`.
 
 **Trade-offs.** The verifier is third-party and unaudited. Gas is high even on the fast path. The admission path depends on a sidecar with staked-entity rules, so a wallet has to stake before its frames are accepted.
 
 **Status (honest).**
-- Captured: canonical rejection (`MAX_VERIFY_GAS`), unstaked sidecar rejection (`Out Of Gas`), contract deployments, and the stake readback (0.012 ETH).
-- Not captured: an admitted, mined PQ frame transaction. The shared devnet's gateway has had no connected miner peers during our runs, so no frame was mined. The stake transaction we first recorded was accepted into the mempool but never mined; the readback is the evidence that the stake exists.
+- Captured: canonical rejection (`MAX_VERIFY_GAS`), unstaked sidecar rejection (`Out Of Gas`), contract deployments, the mined self-stake transaction, and the 0.024 ETH registry readback.
+- Not captured: an admitted, mined PQ frame transaction. The latest bounded staked attempts returned literal `Out Of Gas` at both 3.2M and 6.5M declared VERIFY limits, so no admission or frame link is claimed.
 - To finish this exhibit we need the devnet operator to restore the gateway-to-miner link (or a fresh devnet), then run `docs/REDEPLOY_RUNBOOK.md`.
 
 ## Honest limitations
@@ -54,7 +54,7 @@ Canonical raw HTTP JSON:
 {"error":{"code":-32000,"message":"Invalid params: Frame transaction prefix gas budget (frames + sig cost) exceeds MAX_VERIFY_GAS"},"id":1,"jsonrpc":"2.0"}
 ```
 
-The unstaked sidecar raw response contains the literal `validation frame 0: ran out of gas (Out Of Gas)`. The gateway-to-miner peer window remained empty, so no staked admission or PQ mined frame is claimed. ENS text mutation was blocked by the captured resolver authorization proof; Swarm retrieval returned a Request Approval page with a byte/hash mismatch. Full raw entries are in `docs/FINDINGS.md`.
+The unstaked and staked sidecar raw responses contain the literal `validation frame 0: ran out of gas (Out Of Gas)`. No staked admission or PQ mined frame is claimed. ENS text mutation and rotation succeeded through the project-owned Permissioned Resolver and were read back through UniversalResolverV2. Swarm retrieval is byte-equal through bzz.limo; the official gateway's approval-page response and the bonus limitation are preserved in `docs/FINDINGS.md`. Full raw entries are in `docs/FINDINGS.md`.
 
 ## Attribution
 

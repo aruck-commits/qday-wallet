@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T18:42:42.101Z",
+  "generatedAt": "2026-11-06T19:36:21.637Z",
   "exportMode": "live-read-only",
   "account": {
     "address": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
@@ -18,19 +18,19 @@
     "devnet": {
       "chainId": 1337,
       "participant": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
-      "lastBlock": 7336,
+      "lastBlock": 7873,
       "balanceWei": "549660836018000000",
       "balanceEth": "0.549661",
       "stakeSubject": "0xf2bae312209239cb623c23d2f131269fc5f46006",
-      "stakeWei": "12000000000000000",
-      "stakeEth": "0.012",
+      "stakeWei": "24000000000000000",
+      "stakeEth": "0.024",
       "stakeReadback": true,
       "registry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
       "error": null
     },
     "sepolia": {
       "chainId": 11155111,
-      "latestBlock": 12078405,
+      "latestBlock": 12078671,
       "error": null
     }
   },
@@ -81,11 +81,13 @@
       "verdict": "STAKED",
       "txHash": null,
       "explorerUrl": null,
-      "stakeWei": "12000000000000000",
-      "stakeEth": "0.012",
+      "stakeTx": "0x58ab1529a3a908188f0f4e09968d46a4985bd6b72d4f8fb577fce5147875d678",
+      "stakeExplorerUrl": "https://explorer.altmempool.wtf/0x58ab1529a3a908188f0f4e09968d46a4985bd6b72d4f8fb577fce5147875d678",
+      "stakeWei": "24000000000000000",
+      "stakeEth": "0.024",
       "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
       "stakeReadback": true,
-      "reason": "No admitted frame hash is present in the captured evidence; the next sidecar window is required."
+      "reason": "Registry stake is read back on-chain, but no admitted frame hash is present in the captured evidence."
     },
     "pq": {
       "verdict": "QUEUED",
@@ -126,7 +128,7 @@
     "swarmRef": "81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74",
     "swarmGateway": "https://bzz.limo/bzz",
     "swarmByteEqual": true,
-    "patchTx": "0xc62614cd4dbfc523841af3e8924f25e2a6df669c4c7699596f6c07301792d9a4"
+    "patchTx": "0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5"
   },
   "txHistory": [
     {
@@ -178,12 +180,12 @@
       "status": "mined"
     },
     {
-      "label": "stake submit (accepted, receipt not indexed)",
+      "label": "SpikeWallet stake (mined)",
       "chain": "devnet",
       "kind": "stake",
-      "hash": "0xc8703b08be9c0f627b09068123b24919f5e4069b7615833bc03cf8595d07aefa",
-      "explorerUrl": "https://explorer.altmempool.wtf/0xc8703b08be9c0f627b09068123b24919f5e4069b7615833bc03cf8595d07aefa",
-      "status": "pending"
+      "hash": "0x58ab1529a3a908188f0f4e09968d46a4985bd6b72d4f8fb577fce5147875d678",
+      "explorerUrl": "https://explorer.altmempool.wtf/0x58ab1529a3a908188f0f4e09968d46a4985bd6b72d4f8fb577fce5147875d678",
+      "status": "mined"
     },
     {
       "label": "ENS qdaywallet.eth registration",

@@ -1,0 +1,22 @@
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { createPublicClient, createWalletClient, ExpirationTime } from "@arkiv-network/sdk";
+import { defineSchema, str } from "@arkiv-network/sdk/schema";
+import { eq } from "@arkiv-network/sdk/query";
+import { rabdi } from "@arkiv-network/sdk/chains";
+import { http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { arkivAccessKeyStatus, arkivRelayerStatus, getArkivAccessKey, getArkivRelayerPrivateKey } from "./lib/env.js";
+
+const [major, minor] = process.versions.node.split(".").map(Number);
+if (major < 22 || (major === 22 && minor < 10)) throw new Error("Node 22.10+ required by @arkiv-network/sdk — download from https://nodejs.org/");
+const QDayMigration = defineSchema("qday.migration", { scheme: str().indexed(), wallet: str().optional(), ensName: str().optional(), pqKeyVersion: str().indexed(), pqPkHash: str().optional(), status: str().indexed(), swarmRef: str().optional() });
+const accessKey = getArkivAccessKey(); const privateKey = getArkivRelayerPrivateKey(); console.error(arkivAccessKeyStatus()); console.error(arkivRelayerStatus());
+const chain = rabdi({ accessKey }); const walletClient = createWalletClient({ account: privateKeyToAccount(privateKey), chain, transport: http() }); const publicClient = createPublicClient({ chain, transport: http() });
+const created = await walletClient.createEntity(QDayMigration, { scheme: "ML-DSA-44", pqKeyVersion: "0", status: "scaffold" }, { expiration: ExpirationTime.fromDays(30) });
+console.log(JSON.stringify({ ok: true, stage: "CREATE", entityKey: created.entityKey, txHash: created.txHash }));
+const fetched = await publicClient.getEntity(created.entityKey, QDayMigration); if (fetched.scheme.value !== "ML-DSA-44") throw new Error("CREATE assertion failed"); console.log(JSON.stringify({ ok: true, stage: "QUERY", entityKey: created.entityKey }));
+const patched = await walletClient.patchEntity(QDayMigration, created.entityKey, { set: { pqKeyVersion: "1", status: "rotated" } }); console.log(JSON.stringify({ ok: true, stage: "PATCH", entityKey: created.entityKey, txHash: patched.txHash }));
+const queried = await publicClient.select({ $key: true, pqKeyVersion: true, status: true }).from(QDayMigration).where(eq("scheme", "ML-DSA-44")).fetch(); if (queried.entities.length < 1) throw new Error("QUERY assertion failed"); console.log(JSON.stringify({ ok: true, stage: "QUERY_AFTER_PATCH", count: queried.entities.length }));
+const statePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../tooling/mempool-workshop/.arkiv-state.json"); fs.writeFileSync(statePath, JSON.stringify({ schema: "qday.migration", entityKey: created.entityKey }, null, 2));

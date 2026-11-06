@@ -8,6 +8,10 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## G1 (pending tonight)
 
+## G5 evidence
+
+- 2026-11-06 · Rabdi SDK 1.0.1 PASS · created `qday.migration` entity `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048` in tx `0x36def5cf23e075599abefeb0d9c012b67d18aee977976357cc5533691aa0c2fc`; public get asserted; patch tx `0xc62614cd4dbfc523841af3e8924f25e2a6df669c4c7699596f6c07301792d9a4`; filtered query count `1`.
+
 - 2026-11-06 · operator error · an accidental `demo:spike --help` invocation submitted a second identical spike deployment at nonce `7`, hash `0x219ea9207770c465f3e3f2f3c9bc7aecec0de165d8ca1c9fccf2d1477be0f8b0`; the intended deployment remains nonce `6`, hash `0x92e1384824f64eb1c731268bffd2e1eb31c56e9a1e53b0ce90888ce5209cc5a8`. Both remain pending on the stalled chain and will not be resubmitted.
 
 - [ ] canonical rejection rule name for >100k VERIFY frame (ARBITRARY entry)

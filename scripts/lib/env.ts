@@ -30,7 +30,7 @@ function requireValue(name: string, file: string): EnvironmentValue {
 }
 
 export function getSepoliaRelayerPrivateKey(): string {
-  return requireValue("SEPOLIA_RELAYER_PRIVATE_KEY", ".env.sepolia.local").value;
+  return normalizePrivateKey(requireValue("SEPOLIA_RELAYER_PRIVATE_KEY", ".env.sepolia.local").value);
 }
 
 export function getArkivAccessKey(): string {
@@ -38,7 +38,11 @@ export function getArkivAccessKey(): string {
 }
 
 export function getArkivRelayerPrivateKey(): string {
-  return requireValue("ARKIV_RELAYER_PRIVATE_KEY", ".env.arkiv.local").value;
+  return normalizePrivateKey(requireValue("ARKIV_RELAYER_PRIVATE_KEY", ".env.arkiv.local").value);
+}
+
+function normalizePrivateKey(value: string): string {
+  return /^[0-9a-fA-F]{64}$/.test(value) ? `0x${value}` : value;
 }
 
 export function maskedEnvironmentStatus(value: EnvironmentValue): string {

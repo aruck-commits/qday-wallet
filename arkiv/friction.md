@@ -31,3 +31,8 @@
 
 [TO COMPLETE] Real verdict paragraph: what Arkiv gave us that Postgres+API auth couldn't,
 in one honest sentence (see also why-arkiv.md).
+
+## Observed 2026-11-06
+
+- SDK 0.8 did not export Rabdi; SDK 1.0.1 changed writes to schema-first `createEntity(schema, values, { expiration })`, removed `jsonToPayload`, and split reads to a public client. Node 22.10+ is enforced; this run used Node 24.14.0.
+- `defineSchema("qday.migration", ...)` is client-side only: it supplies a typed `arkiv.schema` tag and has no registry transaction. Create, get, patch, then filtered select completed against Rabdi in one 19.42s script run.

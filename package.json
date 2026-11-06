@@ -7,9 +7,12 @@
     "demo:spike": "tsx scripts/g1-spike.ts",
     "gen:vectors": "tsx scripts/gen_vectors.ts",
     "deploy:devnet": "tsx scripts/deploy_devnet.ts",
-    "demo:mempool": "tsx scripts/demo_mempool.ts"
+    "demo:mempool": "tsx scripts/demo_mempool.ts",
+    "arkiv:sync": "tsx scripts/arkiv_sync.ts",
+    "arkiv:sync": "tsx scripts/arkiv_sync.ts"
   },
   "dependencies": {
+    "@arkiv-network/sdk": "^1.0.1",
     "@forshtat/hegota-support": "0.0.1",
     "@noble/post-quantum": "^0.5.4",
     "viem": "^2.57.7"

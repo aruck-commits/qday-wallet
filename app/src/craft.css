@@ -371,3 +371,6 @@ body { background: var(--bg); }
 .architecture-node span { font-size: 11px; }
 .architecture-node small { font-size: 11px; }
 .architecture-node > b { font-size: 30px; }
+
+/* ---------- lane header: remove duplicated lane letter ---------- */
+.lane-index { display: none; }

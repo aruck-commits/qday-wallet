@@ -355,3 +355,11 @@ body { background: var(--bg); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .12s !important; transition-duration: .12s !important; }
 }
+
+/* ---------- hero proof stats ---------- */
+.hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-self: center; }
+.hero-stat { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 18px; display: grid; gap: 8px; }
+.hero-stat strong { font-family: var(--mono); font-size: 20px; font-weight: 400; color: var(--text); overflow-wrap: anywhere; }
+.hero-stat > span:last-child { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.hero-stat .stat-red { color: var(--red); }
+.hero-stat .stat-green { color: var(--green); }

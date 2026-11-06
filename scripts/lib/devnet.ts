@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createPublicClient, defineChain, http, type Address } from "viem";
+import { createPublicClient, defineChain, encodeFunctionData, http, type Address, type Hex } from "viem";
 
 export const ethrexUrl = "https://altmempool.forshtat.com";
 export const gatewayUrl = "https://altmempoolgateway.forshtat.com/rpc";
@@ -23,6 +23,32 @@ export async function preflight(payer: Address) {
   if (balance < minimumBalance) throw new Error(`payer balance ${balance} below ${minimumBalance}`);
   if (peerCount === 0) throw new Error("gateway→miner p2p down (Oct-24 signature), aborting");
   return result;
+}
+
+export async function readStake(wallet: Address) {
+  const data = encodeFunctionData({ abi: [{ type: "function", name: "getDepositInfo", inputs: [{ type: "address" }], outputs: [{ type: "uint256" }, { type: "uint32" }, { type: "uint64" }], stateMutability: "view" }], functionName: "getDepositInfo", args: [wallet] });
+  const raw = await ethrex.call({ to: stakingRegistry, data });
+  return BigInt(raw.data?.slice(0, 66) ?? "0x0");
+}
+
+export async function postResumePrepare(payer: Address, wallet: Address) {
+  const ready = await preflight(payer); const stake = await readStake(wallet);
+  if (stake <= minimumStake) throw new Error(`stake ${stake} must be strictly greater than ${minimumStake}`);
+  return { ...ready, stake: stake.toString(), wallet };
+}
+
+export async function recoverIfReset(_payer: Address) {
+  throw new Error("recovery writes are disabled until explicit resume execution authorization");
+}
+
+export async function submitWithResubmit(_payload: unknown) {
+  throw new Error("gateway submissions are disabled until explicit resume execution authorization");
+}
+
+export async function simulateFallback(rawFrame: Hex) {
+  const response = await ethrex.request({ method: "ethrex_simulateFrameTransaction" as never, params: [rawFrame] as never });
+  appendFinding({ gate: "G1", simulateFallback: response });
+  return response;
 }
 
 export function appendFinding(entry: unknown) {

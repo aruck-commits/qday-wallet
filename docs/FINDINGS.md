@@ -47,3 +47,5 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
   · violation discriminator = non-empty frame data (empty = clean path) → our clean/PQ branch design.
 
 - {"gate":"G1","error":{"code":null,"rule":null,"hint":null,"message":"ethrex stalled at 408262; aborting"}}
+
+- {"gate":"G1","error":{"code":null,"rule":null,"hint":null,"message":"ethrex stalled at 228; aborting"}}

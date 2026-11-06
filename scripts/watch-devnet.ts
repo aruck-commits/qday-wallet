@@ -1,3 +1,4 @@
+import fs from "node:fs";
 const ethrexUrl = "https://altmempool.forshtat.com";
 const gatewayUrl = "https://altmempoolgateway.forshtat.com/rpc";
 const resumeBlock = 0x63ac6;
@@ -16,6 +17,7 @@ function compact(value: unknown) {
 }
 
 function txpoolCount(value: unknown) {
+  if (typeof value === "string") return String(parseInt(value, 16));
   if (!value || typeof value !== "object") return compact(value);
   const status = value as { pending?: string; queued?: string };
   return String(BigInt(status.pending ?? "0x0") + BigInt(status.queued ?? "0x0"));
@@ -29,7 +31,8 @@ async function poll() {
   const value = (result: PromiseSettledResult<unknown>) => result.status === "fulfilled" ? compact(result.value) : `ERR:${result.reason.message}`;
   const blockHex = block.status === "fulfilled" ? String(block.value) : "ERR";
   const pool = txpool.status === "fulfilled" ? txpoolCount(txpool.value) : `ERR:${txpool.reason.message}`;
-  console.log(`${time} IST block=${blockHex} chain=${value(chainId)} txpool=${pool} peers=${value(peers)}`);
+  const line = `${time} IST block=${blockHex} chain=${value(chainId)} txpool=${pool} peers=${value(peers)}`;
+  console.log(line); fs.appendFileSync("tooling/watch-devnet.log", `${line}\n`);
   if (block.status === "fulfilled" && Number(BigInt(String(block.value))) > resumeBlock) {
     console.log(`RESUMED at ${time} IST`);
     process.exit(0);

@@ -363,3 +363,11 @@ body { background: var(--bg); }
 .hero-stat > span:last-child { font-size: 12px; color: var(--muted); line-height: 1.5; }
 .hero-stat .stat-red { color: var(--red); }
 .hero-stat .stat-green { color: var(--green); }
+
+/* ---------- architecture diagram scale ---------- */
+.architecture-flow { padding: 48px 0; gap: 14px; }
+.architecture-node > div { min-width: 200px; min-height: 130px; padding: 20px; }
+.architecture-node strong { font-size: 17px; }
+.architecture-node span { font-size: 11px; }
+.architecture-node small { font-size: 11px; }
+.architecture-node > b { font-size: 30px; }

@@ -17,6 +17,10 @@ Q-Day Wallet is a quantum-safe smart-wallet prototype using NIST ML-DSA-44 (FIPS
 
 The staked G1 admission, mined G3 PQ frame, ENS PQ write/rotation, and Swarm byte-equal read-back remain unavailable in this run. The demo shows those states as unavailable rather than inventing transaction links.
 
+## ENS final state
+
+PQ write on the default resolver requires `ROLE_SET_TEXT`; registration grants resolver and subregistry roles only. The captured `eth_call` proof is in `docs/FINDINGS.md` under the final ENS diagnosis. The ENS pick therefore stands on the name owned by the PQ wallet, `executePq` infrastructure, regression asserts, and this honest limitation.
+
 ## Honest limitations
 
 The ML-DSA verifier is third-party and unaudited. The prototype retains residual key, authorization, and integration risk. Private keys never leave the active session in the demo path. See `docs/VULNERABILITIES.md`.

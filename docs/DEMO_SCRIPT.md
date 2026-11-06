@@ -9,3 +9,5 @@
 7. (6:00–7:00) Identity: show the real `qdaywallet.eth` registration link; explain PQ write/rotation is pending after an authorization revert.
 8. (7:00–8:15) Architecture: Noble signer -> frame/relayer -> verifier -> QDayWallet -> ENS/Arkiv; point out the unaudited badge.
 9. (8:15–9:00) If asked for gas: answer **2,664,784** measured vs **2,689,594** pinned reference; if asked for missing links, use the raw evidence and never substitute a mock.
+
+ENS fallback: `qdaywallet.eth` is genuinely owned by the PQ wallet and the `executePq` path is tested. The default resolver text write requires `ROLE_SET_TEXT`; registration granted resolver/subregistry roles, not that text role. The live `eth_call` proof is captured, so the demo says this plainly instead of claiming a PQ record.

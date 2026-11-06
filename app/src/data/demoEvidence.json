@@ -1,6 +1,11 @@
 {
-  "generatedAt": "2026-11-06T12:54:19.167Z",
+  "generatedAt": "2026-11-06T13:12:04.796Z",
   "mode": "DRY RUN",
+  "hero": {
+    "headline": "The wallet is the identity.",
+    "subtitle": "Quantum-safe authorization, shown through captured mempool evidence.",
+    "quote": "The wallet is the identity."
+  },
   "demo": {
     "canonical": {
       "verdict": "REJECTED",
@@ -50,11 +55,23 @@
     "wallet": "0xe104a972a2d18a09744b66fb5886f5271a5cc9b0",
     "registerTx": "0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1",
     "explorerUrl": "https://sepolia.etherscan.io/tx/0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1",
-    "name": "qdaywallet.eth"
+    "name": "qdaywallet.eth",
+    "pqWrite": {
+      "verdict": "UNAVAILABLE",
+      "reason": "PQ write unavailable: the default resolver requires ROLE_SET_TEXT; the captured eth_call found no reachable grantor."
+    },
+    "rotation": {
+      "verdict": "UNAVAILABLE",
+      "reason": "PQ write unavailable: the default resolver requires ROLE_SET_TEXT; the captured eth_call found no reachable grantor."
+    }
   },
   "arkiv": {
     "entity": "0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048",
-    "swarmRef": "81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74"
+    "schema": "qday.migration",
+    "swarmRef": "81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74",
+    "swarmGateway": "https://bzz.limo/bzz",
+    "swarmByteEqual": true,
+    "patchTx": "0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5"
   },
   "gas": {
     "measuredVerify": "2,664,784",

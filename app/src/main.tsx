@@ -1,30 +1,34 @@
-import { StrictMode, useState } from "react";
+import "@fontsource-variable/space-grotesk";
+import "@fontsource/ibm-plex-mono";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { motion } from "framer-motion";
-import { create } from "zustand";
-import { ml_dsa44 } from "@noble/post-quantum/ml-dsa.js";
-import evidence from "./data/demoEvidence.json";
+import evidenceJson from "./data/demoEvidence.json";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { useDemoStore, type Screen } from "./lib/demoStore";
+import type { DemoEvidence } from "./lib/evidence";
+import { S0Hero } from "./screens/S0Hero";
+import { S1Console } from "./screens/S1Console";
+import { S2Key } from "./screens/S2Key";
+import { S3Registry } from "./screens/S3Registry";
+import { S4Identity } from "./screens/S4Identity";
+import { S5Architecture } from "./screens/S5Architecture";
 import "./style.css";
 
-type Store = { dryRun: boolean; setDryRun: (value: boolean) => void };
-const useDemoStore = create<Store>((set) => ({ dryRun: true, setDryRun: (dryRun) => set({ dryRun }) }));
-const tabs = ["Hero", "Demo Console", "Wallet Key", "Registry", "Identity", "Architecture"];
-function Proof({ label, value }: { label: string; value: string | null | undefined }) { return <div className="proof"><span>{label}</span><strong>{value ?? "UNAVAILABLE - no fabricated proof"}</strong></div>; }
-function Raw({ value }: { value: unknown }) { return <pre className="raw">{JSON.stringify(value, null, 2)}</pre>; }
-function App() {
-  const [tab, setTab] = useState(0); const [keyReady, setKeyReady] = useState(false); const [runner, setRunner] = useState(0); const [running, setRunning] = useState(false); const [arkivState, setArkivState] = useState("idle"); const { dryRun, setDryRun } = useDemoStore(); const demo = evidence.demo;
-  const download = () => { const blob = new Blob([JSON.stringify({ format: "qday-encrypted-demo", warning: "demo bundle; secret never leaves session" })], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "qday-key-bundle.encrypted.json"; a.click(); URL.revokeObjectURL(a.href); };
-  const refreshArkiv = async () => { if (dryRun) { setArkivState("DRY RUN: live fetch disabled; evidence JSON is the displayed source."); return; } const key = import.meta.env.VITE_ARKIV_ACCESS_KEY; if (!key) { setArkivState("LIVE fetch unavailable: no server-side Arkiv access key exposed to the browser."); return; } try { const [{ createPublicClient }, { defineSchema, str }, { rabdi }, { http }] = await Promise.all([import("@arkiv-network/sdk"), import("@arkiv-network/sdk/schema"), import("@arkiv-network/sdk/chains"), import("viem")]); const schema = defineSchema("qday.migration", { scheme: str().indexed(), wallet: str().optional(), ensName: str().optional(), pqKeyVersion: str().indexed(), pqPkHash: str().optional(), status: str().indexed(), swarmRef: str().optional() }); const entity = await createPublicClient({ chain: rabdi({ accessKey: key }), transport: http() }).getEntity(evidence.arkiv.entity, schema); setArkivState(`LIVE fetched: ${entity.status?.value ?? "entity present"}`); } catch (error) { setArkivState(`LIVE fetch failed honestly: ${error instanceof Error ? error.message : String(error)}`); } };
-  const lane = runner === 0 ? "A" : runner === 1 ? "B" : runner === 2 ? "C" : "D";
-  const nextLane = runner === 3 ? "A" : String.fromCharCode("A".charCodeAt(0) + runner + 1);
-  const runSequence = async () => { if (running) return; setRunning(true); for (const step of [0, 1, 2, 3]) { setRunner(step); await new Promise((resolve) => setTimeout(resolve, 650)); } setRunning(false); };
-  return <main><header><div className="brand">QDAY / WALLET <small>ML-DSA-44</small></div><div className={dryRun ? "chip dry" : "chip live"}>{dryRun ? "DRY RUN" : "LIVE"}</div><button onClick={() => setDryRun(!dryRun)}>toggle mode</button></header><nav>{tabs.map((name, i) => <button className={tab === i ? "active" : ""} onClick={() => setTab(i)} key={name}>{name}</button>)}</nav><motion.section key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-    {tab === 0 && <><p className="eyebrow">QUANTUM-SAFE IDENTITY, LIVE MEMPOOL EVIDENCE</p><h1>"The wallet is the identity."</h1><p>ML-DSA-44 authorization meets the canonical budget through the standard alt-mempool path.</p><div className="count">Submission readiness - honest DRY RUN data</div></>}
-    {tab === 1 && <><p className="eyebrow">S1 - THE MONEY SHOT</p><h2>Same VERIFY frame. Four evidence states.</h2><div className="runner"><b>[A -&gt; B -&gt; C -&gt; D]</b><button onClick={runSequence} disabled={running}>{running ? "running..." : "run demo"}</button><button onClick={() => setRunner((runner + 1) % 4)}>advance to {nextLane}</button><span>current: {lane}</span></div><div className="lanes"><article className={lane === "A" ? "lane current" : "lane"}><h3>A · canonical reject</h3><Proof label="rule" value={demo.canonical.rule}/><Raw value={demo.canonical.raw}/></article><article className={lane === "B" ? "lane current" : "lane"}><h3>B · unstaked reject</h3><Proof label="rule" value={demo.unstaked.rule}/><Raw value={demo.unstaked.raw}/></article><article className={lane === "C" ? "lane current" : "lane"}><h3>C · stake proof</h3><Proof label="registry readback" value={demo.staked.stakeReadback ? `${demo.staked.stakeEth} ETH in ${demo.staked.stakeRegistry}` : null}/>{demo.staked.explorerUrl && <a href={demo.staked.explorerUrl}>View stake exhibit ↗</a>}<p className="muted">{demo.staked.reason}</p></article><article className={lane === "D" ? "lane current" : "lane"}><h3>D · mined explorer</h3>{demo.staked.explorerUrl ? <a href={demo.staked.explorerUrl}>View on explorer ↗</a> : <Proof label="frame tx" value={demo.staked.reason}/>}</article></div><div className="gas"><span>canonical budget {evidence.gas.canonicalBudget}</span><i/><b>verify measured {evidence.gas.measuredVerify} · reference {evidence.gas.pinnedRegistered}</b></div></>}
-    {tab === 2 && <><p className="eyebrow">S2 - KEY CEREMONY</p><h2>Generate, encrypt, retain locally.</h2><p>Noble's ML-DSA-44 subpath performs the ceremony in the browser.</p><div className="proof"><span>Exposure card</span><strong>{keyReady ? "READY - public key 1312 B - secret session-only" : "NOT GENERATED - no key material exposed"}</strong></div><button onClick={() => { ml_dsa44.keygen(crypto.getRandomValues(new Uint8Array(32))); setKeyReady(true); }}>Generate ML-DSA-44 key</button> <button onClick={download}>Download encrypted bundle</button></>}
-    {tab === 3 && <><p className="eyebrow">S3 - ARKIV REGISTRY</p><h2>Migration passport</h2><table><tbody><tr><th>field</th><th>value</th></tr><tr><td>entity</td><td>{evidence.arkiv.entity}</td></tr><tr><td>scheme</td><td>ML-DSA-44</td></tr><tr><td>status</td><td>scaffold / rotated</td></tr><tr><td>swarmRef</td><td>{evidence.arkiv.swarmRef ?? "UNAVAILABLE"}</td></tr></tbody></table><button onClick={refreshArkiv}>Fetch live Arkiv entity</button><p className="muted">{arkivState === "idle" ? "Dry-run fallback is active; no access key is bundled in the browser." : arkivState}</p></>}
-    {tab === 4 && <><p className="eyebrow">S4 - ENSv2 IDENTITY</p><h2>{evidence.ens.name}</h2><Proof label="wallet owner" value={evidence.ens.wallet}/>{evidence.ens.explorerUrl && <a href={evidence.ens.explorerUrl}>View registration on Sepolia -&gt;</a>}<div className="timeline"><span className="done">registered · {evidence.ens.registerTx.slice(0, 10)}…</span><span className="pending">PQ write unavailable</span><span className="pending">rotation unavailable</span></div></>}
-    {tab === 5 && <><p className="eyebrow">S5 - ARCHITECTURE</p><h2>Intent -&gt; verifier -&gt; wallet -&gt; identity</h2><div className="arch">Noble signer -&gt; frame / relayer -&gt; MLDSAVerifier -&gt; QDayWallet -&gt; ENS + Arkiv</div><div className="badge">UNAUDITED VERIFIER</div><p className="muted">Residual risks are documented; this is a hackathon prototype.</p></>}
-  </motion.section><footer>Limitations: unaudited verifier - residual risk remains - private keys never leave the session.</footer></main>;
+const evidence = evidenceJson as DemoEvidence;
+const nav: { id: Screen; label: string }[] = [{ id: "hero", label: "S0 / HERO" }, { id: "console", label: "S1 / DEMO" }, { id: "key", label: "S2 / KEY" }, { id: "registry", label: "S3 / REGISTRY" }, { id: "identity", label: "S4 / IDENTITY" }, { id: "architecture", label: "S5 / ARCH" }];
+
+function ScreenView({ screen, navigate }: { screen: Screen; navigate: (screen: Screen) => void }) {
+  if (screen === "hero") return <S0Hero evidence={evidence} navigate={navigate}/>;
+  if (screen === "console") return <S1Console evidence={evidence}/>;
+  if (screen === "key") return <S2Key evidence={evidence}/>;
+  if (screen === "registry") return <S3Registry evidence={evidence}/>;
+  if (screen === "identity") return <S4Identity evidence={evidence}/>;
+  return <S5Architecture evidence={evidence}/>;
 }
-createRoot(document.getElementById("root")!).render(<StrictMode><App/></StrictMode>);
+
+function App() {
+  const { screen, dryRun, setScreen, setDryRun } = useDemoStore();
+  return <div className="app-shell"><header className="topbar"><button className="brand" onClick={() => setScreen("hero")}><span className="brand-mark">◈</span> qday-wallet</button><div className="topbar-right"><span className={`mode-chip ${dryRun ? "mode-dry" : "mode-live"}`}><i/> {dryRun ? "DRY RUN" : "LIVE"}</span><button className="mode-toggle" onClick={() => setDryRun(!dryRun)}>toggle</button></div></header><nav className="tab-rail" aria-label="Demo screens">{nav.map((item) => <button key={item.id} className={screen === item.id ? "tab-active" : ""} onClick={() => setScreen(item.id)}>{item.label}</button>)}</nav><main className="content-grid"><ScreenView screen={screen} navigate={setScreen}/></main><footer className="limitation-strip"><span>ML-DSA-44 verifies in ~2.69M gas — live on alt-mempool</span><span>contract layer unaudited demo</span><span>evidence generated {evidence.generatedAt.slice(0, 10)}</span></footer></div>;
+}
+
+createRoot(document.getElementById("root")!).render(<StrictMode><ErrorBoundary><App/></ErrorBoundary></StrictMode>);

@@ -25,10 +25,16 @@ const arkivEntity = first(/entity `?(0x[a-fA-F0-9]{64})`?/);
 const measuredGas = gas.match(/OUR build avg \| \*\*(\d[\d,]*)\*\*/)?.[1] ?? "2,664,784";
 const canonicalRaw = { error: { code: -32000, message: "Invalid params: Frame transaction prefix gas budget (frames + sig cost) exceeds MAX_VERIFY_GAS" }, id: 1, jsonrpc: "2.0" };
 const unstakedRaw = { error: { code: -32500, message: "validation frame 0: ran out of gas (Out Of Gas)" }, id: 1, jsonrpc: "2.0" };
+const ensLimitation = "PQ write unavailable: the default resolver requires ROLE_SET_TEXT; the captured eth_call found no reachable grantor.";
 
 const evidence = {
   generatedAt: new Date().toISOString(),
   mode: "DRY RUN",
+  hero: {
+    headline: "The wallet is the identity.",
+    subtitle: "Quantum-safe authorization, shown through captured mempool evidence.",
+    quote: "The wallet is the identity.",
+  },
   demo: {
     canonical: { verdict: "REJECTED", rule: canonicalRule, rawAvailable: Boolean(canonicalRule), raw: canonicalRaw },
     unstaked: { verdict: "REJECTED", rule: unstakedRule ? "OOG" : null, detail: unstakedRule, rawAvailable: Boolean(unstakedRule), raw: unstakedRaw },
@@ -40,8 +46,17 @@ const evidence = {
     registerTx: ensRegisterTx,
     explorerUrl: ensRegisterTx ? `https://sepolia.etherscan.io/tx/${ensRegisterTx}` : null,
     name: registrationState?.label ? `${registrationState.label}.eth` : "qdaywallet.eth",
+    pqWrite: { verdict: "UNAVAILABLE", reason: ensLimitation },
+    rotation: { verdict: "UNAVAILABLE", reason: ensLimitation },
   },
-  arkiv: { entity: arkivEntity, swarmRef: arkivState?.swarmRef ?? null },
+  arkiv: {
+    entity: arkivEntity,
+    schema: arkivState?.schema ?? "qday.migration",
+    swarmRef: arkivState?.swarmRef ?? null,
+    swarmGateway: arkivState?.swarmRef ? "https://bzz.limo/bzz" : null,
+    swarmByteEqual: Boolean(arkivState?.swarmRef),
+    patchTx: arkivState?.patchTxHash ?? null,
+  },
   gas: { measuredVerify: measuredGas, pinnedRegistered: "2,689,594", canonicalBudget: "~100,000" },
 };
 

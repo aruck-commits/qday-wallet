@@ -1,39 +1,23 @@
-# Who uses Q-Day Wallet's public PQ-key registry — and why it matters
+# Reach: who uses the Q-Day Wallet migration registry today
 
-## The one-line answer
+## Measured now (as of the submission snapshot)
+- Entities on Arkiv: **1** (`qday.migration`, key `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048`).
+- Writer wallet: `0xD73977DdE03abAB3984cFb1e0A2d7629a693A4a1`. Patch transaction mined (block 290762).
+- Query that a judge can run: `yarn arkiv:read` (SDK query `scheme = "ML-DSA-44"` returns 1 entity).
+- External readers, integrations, or other projects using this registry: **0**. We have not measured any outside usage, and we do not claim any.
+- The Registry screen in the demo shows the build-time read result from Arkiv.
 
-Anyone who needs to answer **"is this address quantum-safe, and since when?"** without
-trusting an API — ENS integrators, exchanges doing withdrawal-key due diligence, explorers,
-auditors, and end users deciding whether an address is worth writing a PQ key to.
+## Who it is for
+1. **Wallet and SDK teams** deciding whether to ship PQ support. They need to see which wallets are PQ-enrolled and when the key changed.
+2. **Exchanges and custodians** checking whether a withdrawal key still has a PQ record that matches its wallet (`wallet → pqPkHash → status`).
+3. **ENS integrators** checking whether a name's owner has an active PQ key. The name record and the Arkiv entity are both public and can be checked independently.
+4. **Researchers** measuring PQ migration over time. The schema is public and queryable.
 
-## Concrete user groups
+## Would they use it today?
+- Anyone with an Arkiv client can run the query above. There is no access key needed for the public read path.
+- The write path needs a relayer key, so only the project team can add entities today.
+- Keeping this registry going after Mumbai depends on whether a wallet provider or exchange adopts the schema. We have not asked anyone yet.
 
-1. **Wallet providers / SDK teams.** Before shipping PQ support, they need data on *which*
-   wallets are PQ-enrolled and how readings drift across events. The registry gives a public
-   roster they can query without registering anywhere.
-2. **Exchanges & custodial services.** Post-Q-day, they can decide per-address whether a
-   deposit path is still reconcilable with the assumed security of the withdrawal key.
-   `wallet → pqPkHash → status` is exactly the record needed for that policy.
-3. **ENS-facing applications.** Names whose PQ record admins rotate via `rotatePqKey` are
-   verifiable here — an integrator can assert "name owner has an ACTIVE PQ key" from Arkiv,
-   then trust ENS. Without the registry, ENS integrators would have to parse frame txs.
-4. **Auditors & researchers.** A structured dataset of real PQ keys + versions + verifier
-   contracts is genuinely useful for PQ-migration measurement over time (adoption stats).
-5. **The wallet's own UI** (and any webhook frontends): we consume our own registry via
-   watch events — using the product dogfooding it, no special-casing.
-
-## What groups can start doing with it IMMEDIATELY after the demo (no setup)
-
-- Read the registry via any Arkiv client (the schema + access key are public; address keys
-  queryable by rule `status eq 'ACTIVE'`).
-- Follow the watch feed to see falls in `ACTIVE` and rises in `ROTATED` — an adoption pulse
-  that didn't exist before.
-- Cross-check any wallet address against its claimed PQ key fingerprint (the "who guards
-  the vault keys" use case for exchanges in one query).
-
-## Integration futures (stated honestly, not claimed as built)
-
-- Enrich with per-event pointers (rotation tx hash fields) — trivial extension.
-- Multi-chain expansion by adding `chain` column + per-chain verify contracts.
-- Aggregations (migration dashboards) built by others on our registry — we don't claim them;
-  the registry makes them possible.
+## Limits
+- One entity is a demo, not a population. Do not read these numbers as adoption.
+- The `swarmRef` field points at a passport uploaded through a public gateway, with no postage batch. See `arkiv/swarm.md`.

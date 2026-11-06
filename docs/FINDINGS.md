@@ -89,3 +89,13 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 - {"gate":"G4","entry":{"stage":"sepolia_stack_deployed","result":{"factory":"0xDE3211df9A74dD8eac66b411C6Bb6Eb7A1d08FBa","verifier":"0xfD785c07bc45B4648a52c9E315B318be17D30169","wallet":"0xe104a972a2d18a09744b66fb5886f5271a5cc9b0","txHashes":{"factory":"0x13e17a2d0a8670a3b248b5416c2510a43ad709c7b22f451d8bf9a7a53da45fca","verifier":"0x9e8b2462bfea1331a3ba0e83402686d604ca51005a4a847dd14174c127319171","wallet":"0x2f3101a67e53a87cf4dcd7875c7e6fffb0deb8f132d12f94a807c94c1d928cd9"},"relayer":"0x56cE1a74716E3b06E12B317279a4E027eb0d9169"}}}
 
 - {"gate":"G4","entry":{"stage":"ens_registered","result":{"wallet":"0xe104a972a2d18a09744b66fb5886f5271a5cc9b0","label":"qdaywallet.eth","registrar":"0xf633e7fc17e2bbe0d0965d18ec1821dcb754a3d3","mockUsdc":"0x240b0316df57887dbbe58b586508b19e633a14aa","price":"8000021","txHashes":{"commit":"0x0932d356e521d4bb0eb25022346d0f909b00a1f197b78c91721714568828653b","register":"0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1"},"optional":{"label":"qday.eth","available":true,"price":"160000009","balance":"100000000","attempted":false,"reason":"not covered by remaining MockUSDC"}}}}
+
+- {"gate":"G1","stage":"preflight_canonical","response":{"firstBlock":"2221","block":"2224","balance":"699979692868000000","payer":"0x3b7CdFf8ED99272338abF93A3B31b13421f779b1"}}
+
+- {"gate":"G1","stage":"spike_deploy","response":{"deployHash":"0x6034f81ae7704638f746845078afd16e34f13ed82774d16dc85604e1ed61028b","wallet":"0xf2bae312209239cb623c23d2f131269fc5f46006","runtimeCodehash":"0xc94a6ed5ca5e26c9715e4959e6cfffdf8ccbcfb584b1c056bad71facd8408528","normalizedRuntimeCodehash":"0xba07c5433c6a68a3495505cdb1f57713817fcc04d8f2997634ebdde0802a2ab1"}}
+
+- {"gate":"G1","stage":"canonical_arbitrary_verify_raw_supersedes_wrapper","response":{"accepted":false,"raw":{"error":{"code":-32000,"message":"Invalid params: Frame transaction prefix gas budget (frames + sig cost) exceeds MAX_VERIFY_GAS"},"id":1,"jsonrpc":"2.0"}}}
+
+- {"gate":"G1","error":{"error":"Error: gateway→miner p2p down (Oct-24 signature), aborting","chain":[{"message":"gateway→miner p2p down (Oct-24 signature), aborting"}]}}
+
+- {"gate":"G1","error":{"error":"Error: gateway→miner p2p down (Oct-24 signature), aborting","chain":[{"message":"gateway→miner p2p down (Oct-24 signature), aborting"}]}}

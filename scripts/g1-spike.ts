@@ -38,7 +38,7 @@ const chain = defineChain({
 
 type WorkshopState = { participantKey?: Hex };
 type SpikeState = { deployHash?: Hex };
-type RpcOutcome = { accepted: true; hash: Hex } | { accepted: false; error: Record<string, unknown> };
+type RpcOutcome = { accepted: true; hash: Hex; raw: unknown } | { accepted: false; raw: unknown };
 
 function readParticipantKey(): Hex {
   const state = JSON.parse(fs.readFileSync(statePath, "utf8")) as WorkshopState;
@@ -78,11 +78,14 @@ function rpcError(error: unknown): Record<string, unknown> {
   return { error: String(error), chain };
 }
 
-async function attempt(send: () => Promise<Hex>): Promise<RpcOutcome> {
+async function rawRpc(url: string, method: string, params: unknown[]): Promise<RpcOutcome> {
   try {
-    return { accepted: true, hash: await send() };
+    const response = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) });
+    const raw = await response.json();
+    if (!response.ok || raw.error) return { accepted: false, raw };
+    return { accepted: true, hash: raw.result as Hex, raw };
   } catch (error) {
-    return { accepted: false, error: rpcError(error) };
+    return { accepted: false, raw: { transportError: rpcError(error) } };
   }
 }
 
@@ -96,13 +99,14 @@ async function main() {
   const canonicalOnly = process.argv.includes("--canonical");
   const canonicalSubmit = process.argv.includes("--canonical-submit");
   const sidecarOnly = process.argv.includes("--sidecar");
+  const unstakedOnly = process.argv.includes("--sidecar-unstaked");
   if (process.argv.includes("--preflight")) {
     const account = privateKeyToAccount(readParticipantKey());
     const readiness = await (canonicalOnly ? preflightCanonical : preflightSidecar)(account.address);
     console.log(JSON.stringify({ ok: true, mode: canonicalOnly ? "canonical" : "sidecar", ...readiness }));
     return;
   }
-  if ((canonicalOnly ? 1 : 0) + (canonicalSubmit ? 1 : 0) + (sidecarOnly ? 1 : 0) !== 1) throw new Error("demo:spike requires --canonical, --canonical-submit, or --sidecar");
+  if ((canonicalOnly ? 1 : 0) + (canonicalSubmit ? 1 : 0) + (sidecarOnly ? 1 : 0) + (unstakedOnly ? 1 : 0) !== 1) throw new Error("demo:spike requires --canonical, --canonical-submit, --sidecar-unstaked, or --sidecar");
   const privateKey = readParticipantKey();
   const account = privateKeyToAccount(privateKey);
   const canonicalMode = canonicalOnly || canonicalSubmit;
@@ -114,7 +118,7 @@ async function main() {
   const artifact = readArtifact();
   let deployHash: Hex;
   let wallet: Address;
-  if (canonicalSubmit || sidecarOnly) {
+  if (canonicalSubmit || sidecarOnly || unstakedOnly) {
     const saved = JSON.parse(fs.readFileSync(runStatePath, "utf8")) as SpikeState;
     if (!saved.deployHash) throw new Error("resume mode requires a prior canonical deployment state");
     deployHash = saved.deployHash;
@@ -144,17 +148,18 @@ async function main() {
     fees: { maxFeePerGas: 2_000_000_000n },
   });
   const hash = txHash(profile, tx);
-  const canonical = await attempt(() => publicClient.request({ method: "eth_sendRawTransaction" as never, params: [encodeTx(profile, tx)] as never }));
-  finding("canonical_arbitrary_verify", canonical);
+  const canonical = canonicalMode ? await rawRpc(ethrexUrl, "eth_sendRawTransaction", [encodeTx(profile, tx)]) : { accepted: false as const, raw: { skipped: true } };
+  if (canonicalMode) finding("canonical_arbitrary_verify_raw_supersedes_wrapper", canonical);
   if (canonicalMode) {
-    const raw = JSON.stringify(canonical);
+    const raw = JSON.stringify(canonical.raw);
     if (canonical.accepted) throw new Error("canonical ARBITRARY VERIFY frame was unexpectedly accepted");
     if (/nonce|malformed/i.test(raw) || !/(MAX_VERIFY_GAS|GREP-|REPUTATION-)/.test(raw)) throw new Error("canonical rejection was not a budget-type rule");
     console.log(JSON.stringify({ ok: true, mode: "canonical", wallet, deployHash, txHash: hash, canonical }));
     return;
   }
-  const sidecar = await attempt(() => publicClient.request({ method: "eth_sendFrameTransaction" as never, params: [toWire(tx)] as never }));
-  finding("sidecar_unstaked_arbitrary_verify", sidecar);
+  const sidecar = await rawRpc(gatewayUrl, "eth_sendFrameTransaction", [toWire(tx)]);
+  finding("sidecar_unstaked_arbitrary_verify_raw_supersedes_wrapper", sidecar);
+  if (unstakedOnly) { console.log(JSON.stringify({ ok: !sidecar.accepted, mode: "sidecar-unstaked", wallet, txHash: hash, sidecar })); return; }
   if (canonical.accepted || sidecar.accepted) throw new Error("expected both pre-stake ARBITRARY submissions to reject");
 
   const stakeTx = await signTx(profile, newTx({
@@ -174,7 +179,7 @@ async function main() {
     signatures: [secp256k1Placeholder(profile, account.address)],
     fees: { maxFeePerGas: 2_000_000_000n },
   }), privateKey);
-  const stakeSubmit = await attempt(() => publicClient.request({ method: "eth_sendFrameTransaction" as never, params: [toWire(stakeTx)] as never }));
+  const stakeSubmit = await rawRpc(gatewayUrl, "eth_sendFrameTransaction", [toWire(stakeTx)]);
   finding("self_stake_sender_frame", stakeSubmit);
   if (!stakeSubmit.accepted) throw new Error("self-stake was rejected; no retry performed");
   const stakeReceipt = await publicClient.waitForTransactionReceipt({ hash: stakeSubmit.hash, timeout: 120_000, pollingInterval: 5_000 });
@@ -182,7 +187,7 @@ async function main() {
   finding("self_stake_receipt", { receipt: stakeReceipt, stakeWei: stake.toString() });
   if (stakeReceipt.status !== "success" || stake <= parseEther("0.01")) throw new Error(`stake did not settle strictly above 0.01 ETH: ${stake}`);
 
-  const staked = await attempt(() => publicClient.request({ method: "eth_sendFrameTransaction" as never, params: [toWire(tx)] as never }));
+  const staked = await rawRpc(gatewayUrl, "eth_sendFrameTransaction", [toWire(tx)]);
   finding("sidecar_staked_arbitrary_verify", staked);
   if (!staked.accepted) throw new Error("staked ARBITRARY submission rejected");
   const statuses = await pollFrameStatus(staked.hash);

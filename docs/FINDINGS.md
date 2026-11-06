@@ -10,6 +10,8 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## decisions
 
+- 2026-11-08 · τ-4 final peer window · Three gateway probes returned HTTP 200 with literal `result: []`. No sidecar submission was attempted, no nonce was consumed, and the staked evidence fields remain unavailable.
+
 - 2026-11-08 · τ-1 ENS diagnosis · Fresh `contracts-v2` `main` source identifies `0x4b27a133` as `EACUnauthorizedAccountRoles(uint256,uint256,address)`. Registry `getResolver("qdaywallet")` read back live proxy `0xdc4a563d00f5c3012b699794eb9e13a561be386f`; implementation `0x115eb53f0c60696633855f90b138178fb40b2b2c` is not the call target. Corrected calldata uses proxy `setText(bytes32 node,string,string)`, node `0x71de616bdc7a43cd39a6db9f50470c819d917b4f487a91195db0038f8e1993a7`, and `ROLE_SET_TEXT = 16`. Raw direct `eth_call` from wallet `0xe104a972a2d18a09744b66fb5886f5271a5cc9b0` returned `{"jsonrpc":"2.0","id":1,"error":{"code":3,"message":"execution reverted","data":"0x"}}`; implementation `roles(0,wallet)` and `roles(resource(node,keccak256("pq-key")),wallet)` both returned `0`, and `hasRoles(...,16,wallet)` returned `false`. No passing simulation, broadcast, or rotation was attempted; authorization is unreachable without a new grant path.
 
 - 2026-11-07 · Ω-2 post-Ω-3 hard-stop · The required post-Ω-3 gateway probe returned `{"http":200,"raw":{"jsonrpc":"2.0","id":2,"result":[]}}`; the earlier five-minute window also returned five literal empty arrays. Sidecar G1/G3 submissions were not attempted and no known frame was resubmitted.

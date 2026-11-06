@@ -18,7 +18,7 @@ The verifier URL above is intentionally marked unavailable if the explorer does 
 - [x] Gas evidence and source cross-check in `docs/GAS.md`.
 - [x] Demo app builds with `bun run app:build`.
 - [x] Honest limitations and AI attribution present.
-- [ ] Staked G1 admission URL — missing because gateway-to-miner peers remained empty.
+- [ ] Staked G1 admission URL — missing because the final three-probe gateway window still returned literal `result: []` peers.
 - [ ] Mined G3 PQ frame URL — missing because the sidecar gate remained unavailable.
 - [ ] ENS PQ write/rotation URLs — missing after two identical `0x4b27a133` authorization reverts.
 - [ ] Swarm byte-equal public read-back — missing because gateway returned Request Approval HTML.

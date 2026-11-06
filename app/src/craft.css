@@ -219,6 +219,14 @@ pre i { font-style: normal; }
 /* ---------- final polish ---------- */
 .limitation-strip { position: static; margin-top: 40px; flex-wrap: wrap; gap: 8px 22px; padding: 14px 20px; }
 .content-grid { padding-bottom: 40px; }
+@media (max-width: 600px) {
+  .brand { white-space: nowrap; font-size: 15px; gap: 6px; }
+  .balance-chip { display: none; }
+  .account-header { grid-template-columns: 1fr auto; }
+  .chain-switcher { grid-column: 1 / -1; grid-row: 2; justify-self: stretch; }
+  .chain-switcher button { flex: 1; }
+  .account-chip { font-size: 9px; }
+}
 @media (max-width: 900px) {
   .account-meta { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
   .account-header { row-gap: 10px; padding-top: 12px; padding-bottom: 12px; }

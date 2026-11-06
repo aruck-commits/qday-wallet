@@ -42,3 +42,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-06 | Codex | G6 evidence pipeline and honest dry-run evidence model | prompts/2026-11-06-prompt-beta-ui.md |
 | 2026-11-07 | Codex | Omega runbook and G3 fresh-chain deployment/precompute | prompts/2026-11-07-omega.md |
 | 2026-11-07 | Codex | Omega G4 hard-stop, Swarm evidence, and G6 UI completion | prompts/2026-11-07-omega.md |
+| 2026-11-08 | Codex | Tau ENS diagnosis, real G6 screens, and G7 deliverables | prompts/2026-11-08-tau.md |

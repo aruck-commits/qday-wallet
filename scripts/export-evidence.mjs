@@ -14,6 +14,7 @@ const readJson = (file) => {
 const findings = read(path.join(root, "docs/FINDINGS.md"));
 const gas = read(path.join(root, "docs/GAS.md"));
 const registrationState = readJson(path.join(root, "tooling/sepolia-registration-state.json"));
+const arkivState = readJson(path.join(root, "tooling/mempool-workshop/.arkiv-state.json"));
 const first = (pattern) => findings.match(pattern)?.[1] ?? null;
 
 const canonicalRule = first(/exceeds (MAX_VERIFY_GAS)/);
@@ -38,7 +39,7 @@ const evidence = {
     explorerUrl: ensRegisterTx ? `https://sepolia.etherscan.io/tx/${ensRegisterTx}` : null,
     name: registrationState?.label ? `${registrationState.label}.eth` : "qdaywallet.eth",
   },
-  arkiv: { entity: arkivEntity, swarmRef: null },
+  arkiv: { entity: arkivEntity, swarmRef: arkivState?.swarmRef ?? null },
   gas: { measuredVerify: measuredGas, pinnedRegistered: "2,689,594", canonicalBudget: "~100,000" },
 };
 

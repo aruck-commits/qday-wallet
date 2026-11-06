@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T12:13:17.093Z",
+  "generatedAt": "2026-11-06T12:16:06.052Z",
   "mode": "DRY RUN",
   "demo": {
     "canonical": {
@@ -34,7 +34,7 @@
   },
   "arkiv": {
     "entity": "0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048",
-    "swarmRef": null
+    "swarmRef": "81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74"
   },
   "gas": {
     "measuredVerify": "2,664,784",

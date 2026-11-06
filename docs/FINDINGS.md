@@ -8,6 +8,10 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## G1 (pending tonight)
 
+## decisions
+
+- 2026-11-06 · G1 sidecar finalization SKIPPED-RISK · Decision: after two zero-peer preflight failures, do not submit the staked frame or retry an admitted/known payload. Reason: the runbook and AGENTS.md require an empty gateway→miner P2P link to be a hard stop; canonical raw evidence remains valid and exact.
+
 ## G4 evidence
 
 - 2026-11-06 · Sepolia ENSv2 PASS · `qdaywallet.eth` registered to QDayWallet `0xe104a972a2d18a09744b66fb5886f5271a5cc9b0`; replacement-owner commitment tx `0x0932d356e521d4bb0eb25022346d0f909b00a1f197b78c91721714568828653b`, register tx `0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1`. Optional `qday.eth` quote `160000009` MockUSDC exceeded observed balance `91999979`; no premium registration submitted.

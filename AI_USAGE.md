@@ -30,3 +30,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-05 | opencode (GLM) | G0 workshop baseline (steps 1–2), source research | prompts/2026-11-05-workshop-baseline.md |
 | 2026-11-05 | Codex | G0 workshop baseline and G1 ARBITRARY spike | prompts/2026-11-05-g0-g1-codex.md |
 | 2026-11-06 | Codex | G0 workshop baseline continuation (steps 7–13) | prompts/2026-11-06-g0-continuation.md |
+| 2026-11-06 | Codex | G1 ARBITRARY spike and G2 contract scaffold | prompts/2026-11-06-g1-g2-lanes.md |

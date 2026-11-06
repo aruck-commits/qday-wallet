@@ -13,6 +13,10 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 - [ ] ARBITRARY entry layout: sigparam indices + sigdatacopy offsets (fixture)
 - [ ] exact VERIFY-frame execution limit observed per profile
 
+## G0 (scope closed for qualification)
+
+- 2026-11-06 · G0 accepted as sufficient for this build: steps 9–11 are conditional follow-up patterns; steps 12–13 are cut-list item #4. Step 8 remains pending and will not be resubmitted.
+
 ## G0 (workshop baseline — pre-running before spec lock)
 
 - 2026-11-06 · step_8 inclusion check · chain advanced to block `408262` (`0x63ac6`) while `eth_getTransactionCount(violatingWallet, "latest")` remained `9`; sidecar debug still reports the nonce-`9` tx `0xeba434c2051d6399a5cc8ff9ac804296abdc5d0efffe35fb75c5b5093b3f242a` as `New` with no receipt. This is an inclusion stall, not a stopped chain.

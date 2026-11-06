@@ -17,6 +17,7 @@ import "./style.css";
 import "./screen-overrides.css";
 import "./brand-font.css";
 import "./chi.css";
+import "./craft.css";
 
 const evidence = evidenceJson as DemoEvidence;
 const nav: { id: Screen; label: string }[] = [

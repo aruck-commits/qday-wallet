@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T14:21:15.458Z",
+  "generatedAt": "2026-11-06T15:05:41.853Z",
   "exportMode": "live-read-only",
   "account": {
     "address": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
@@ -18,7 +18,7 @@
     "devnet": {
       "chainId": 1337,
       "participant": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
-      "lastBlock": 4723,
+      "lastBlock": 5167,
       "balanceWei": "549660836018000000",
       "balanceEth": "0.549661",
       "stakeSubject": "0xf2bae312209239cb623c23d2f131269fc5f46006",
@@ -30,7 +30,7 @@
     },
     "sepolia": {
       "chainId": 11155111,
-      "latestBlock": 12077117,
+      "latestBlock": 12077333,
       "error": null
     }
   },
@@ -114,7 +114,7 @@
     "swarmRef": "81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74",
     "swarmGateway": "https://bzz.limo/bzz",
     "swarmByteEqual": true,
-    "patchTx": "0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5"
+    "patchTx": "0xc62614cd4dbfc523841af3e8924f25e2a6df669c4c7699596f6c07301792d9a4"
   },
   "txHistory": [
     {
@@ -185,16 +185,16 @@
       "label": "Arkiv entity create",
       "chain": "arkiv",
       "kind": "entity",
-      "hash": "0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048",
-      "explorerUrl": "https://rabdi.explorer.arkiv.network/tx/0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048",
+      "hash": "0x36def5cf23e075599abefeb0d9c012b67d18aee977976357cc5533691aa0c2fc",
+      "explorerUrl": "https://rabdi.explorer.arkiv.network/tx/0x36def5cf23e075599abefeb0d9c012b67d18aee977976357cc5533691aa0c2fc",
       "status": "recorded"
     },
     {
       "label": "Arkiv entity patch",
       "chain": "arkiv",
       "kind": "patch",
-      "hash": "0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5",
-      "explorerUrl": "https://rabdi.explorer.arkiv.network/tx/0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5",
+      "hash": "0xc62614cd4dbfc523841af3e8924f25e2a6df669c4c7699596f6c07301792d9a4",
+      "explorerUrl": "https://rabdi.explorer.arkiv.network/tx/0xc62614cd4dbfc523841af3e8924f25e2a6df669c4c7699596f6c07301792d9a4",
       "status": "recorded"
     },
     {

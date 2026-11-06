@@ -35,3 +35,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-06 | Codex | G2 verification tests and G1 fixed-burn calibration | prompts/2026-11-06-g1-g2-lanes.md |
 | 2026-11-06 | Codex | G2 real-verifier vectors and G3 script scaffolds | prompts/2026-11-06-g1-g2-lanes.md |
 | 2026-11-06 | Codex | G2 gas cross-check and G4 live deployment preparation | prompts/2026-11-06-g1-g2-lanes.md |
+| 2026-11-06 | Codex | G4 ENSv2 ABI verification and Sepolia deploy/register implementation | prompts/2026-11-06-g1-g2-lanes.md |

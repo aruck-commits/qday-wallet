@@ -10,6 +10,8 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## decisions
 
+- 2026-11-07 · Ω-2 post-Ω-3 hard-stop · The required post-Ω-3 gateway probe returned `{"http":200,"raw":{"jsonrpc":"2.0","id":2,"result":[]}}`; the earlier five-minute window also returned five literal empty arrays. Sidecar G1/G3 submissions were not attempted and no known frame was resubmitted.
+
 - 2026-11-07 · Ω-5 UI verification · `bun run app:build` passed with Vite production output; Vite preview smoke returned HTTP 200 at `http://127.0.0.1:4173/`. The app keeps missing staked/PQ/Swarm artifacts unavailable and exposes DRY RUN mode visibly.
 
 - 2026-11-07 · Ω-4 gateway approval hard-stop · The Swarm POST returned HTTP 200 and reference `33fc453e27911eedfac9e2dee76f306322f440ff520c6058458df8a2a3459b60`; both public GET attempts returned the gateway's 5496-byte Request Approval HTML, not the 388-byte passport (`expectedSha256 b0b64893fa351ef31e28d1a75e65db1398595703d4309ad69d8e989d99085bda`, `observedSha256 690fc63278a99804d731f8ddc3fcf1ad8cc7e20648aaa3d07306b6cbcd655b99`). No Arkiv patch was made.

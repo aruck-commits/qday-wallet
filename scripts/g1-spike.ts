@@ -16,7 +16,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { profile } from "@forshtat/hegota-support/profiles/ethrex-eip8141-tracer";
 import { encodeTx, frame, newTx, secp256k1Placeholder, sigScheme, signTx, txHash } from "@forshtat/hegota-support/tx";
 import { toWire } from "@forshtat/hegota-support/rpc";
-import { appendFinding, pollFrameStatus, preflight, readStake, stakingRegistry } from "./lib/devnet.js";
+import { appendFinding, ethrexUrl, pollFrameStatus, preflightCanonical, preflightSidecar, readStake, stakingRegistry } from "./lib/devnet.js";
 
 const gatewayUrl = "https://altmempoolgateway.forshtat.com/rpc";
 const recipient = "0x8943545177806ED17B9F23F0a21ee5948eCaa776" as const;
@@ -37,6 +37,7 @@ const chain = defineChain({
 });
 
 type WorkshopState = { participantKey?: Hex };
+type SpikeState = { deployHash?: Hex };
 type RpcOutcome = { accepted: true; hash: Hex } | { accepted: false; error: Record<string, unknown> };
 
 function readParticipantKey(): Hex {
@@ -48,6 +49,16 @@ function readParticipantKey(): Hex {
 function readArtifact(): { abi: readonly unknown[]; bytecode: Hex } {
   const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8")) as { abi: readonly unknown[]; bytecode: { object: Hex } };
   return { abi: artifact.abi, bytecode: artifact.bytecode.object };
+}
+
+function assertSpikeRuntime(code: Hex) {
+  const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8")) as { deployedBytecode: { object: Hex; immutableReferences?: Record<string, { start: number; length: number }[]> } };
+  let normalized = code.slice(2);
+  for (const references of Object.values(artifact.deployedBytecode.immutableReferences ?? {})) {
+    for (const { start, length } of references) normalized = `${normalized.slice(0, start * 2)}${"00".repeat(length)}${normalized.slice((start + length) * 2)}`;
+  }
+  if (keccak256((`0x${normalized}`) as Hex) !== keccak256(artifact.deployedBytecode.object)) throw new Error("Spike normalized runtime codehash mismatch");
+  return { runtimeCodehash: keccak256(code), normalizedRuntimeCodehash: keccak256((`0x${normalized}`) as Hex) };
 }
 
 function rpcError(error: unknown): Record<string, unknown> {
@@ -82,36 +93,48 @@ function finding(stage: string, response: unknown) {
 }
 
 async function main() {
-  if (process.argv.includes("--preflight")) { const account = privateKeyToAccount(readParticipantKey()); console.log(JSON.stringify({ ok: true, mode: "preflight", ...(await preflight(account.address)) })); return; }
-  if (process.argv.length !== 2) throw new Error("demo:spike accepts no arguments");
+  const canonicalOnly = process.argv.includes("--canonical");
+  const canonicalSubmit = process.argv.includes("--canonical-submit");
+  const sidecarOnly = process.argv.includes("--sidecar");
+  if (process.argv.includes("--preflight")) {
+    const account = privateKeyToAccount(readParticipantKey());
+    console.log(JSON.stringify({ ok: true, mode: canonicalOnly ? "canonical" : "sidecar", ...((canonicalOnly ? preflightCanonical : preflightSidecar)(account.address)) }));
+    return;
+  }
+  if ((canonicalOnly ? 1 : 0) + (canonicalSubmit ? 1 : 0) + (sidecarOnly ? 1 : 0) !== 1) throw new Error("demo:spike requires --canonical, --canonical-submit, or --sidecar");
   const privateKey = readParticipantKey();
   const account = privateKeyToAccount(privateKey);
-  const readiness = await preflight(account.address);
-  finding("preflight", readiness);
-  const publicClient = createPublicClient({ chain, transport: http(gatewayUrl) });
-  const walletClient = createWalletClient({ account, chain, transport: http(gatewayUrl) });
+  const canonicalMode = canonicalOnly || canonicalSubmit;
+  const readiness = await (canonicalMode ? preflightCanonical : preflightSidecar)(account.address);
+  finding(canonicalMode ? "preflight_canonical" : "preflight_sidecar", readiness);
+  const rpcUrl = canonicalMode ? ethrexUrl : gatewayUrl;
+  const publicClient: any = createPublicClient({ chain, transport: http(rpcUrl) });
+  const walletClient: any = createWalletClient({ account, chain, transport: http(rpcUrl) });
   const artifact = readArtifact();
-  const deployHash = await walletClient.deployContract({
-    abi: artifact.abi,
-    bytecode: artifact.bytecode,
-    account,
-    value: parseEther("0.15"),
-    gas: 6_000_000n,
-    gasPrice: 2_000_000n,
-  });
-  fs.writeFileSync(runStatePath, JSON.stringify({ deployHash }) + "\n");
-  const deployReceipt = await publicClient.waitForTransactionReceipt({ hash: deployHash, timeout: 120_000, pollingInterval: 2_000 });
-  if (deployReceipt.status !== "success" || !deployReceipt.contractAddress) throw new Error(`Spike deployment failed: ${deployHash}`);
-  const wallet = deployReceipt.contractAddress;
+  let deployHash: Hex;
+  let wallet: Address;
+  if (canonicalSubmit) {
+    const saved = JSON.parse(fs.readFileSync(runStatePath, "utf8")) as SpikeState;
+    if (!saved.deployHash) throw new Error("canonical-submit requires a prior canonical deployment state");
+    deployHash = saved.deployHash;
+    const deployReceipt = await publicClient.getTransactionReceipt({ hash: deployHash });
+    if (deployReceipt.status !== "success" || !deployReceipt.contractAddress) throw new Error(`saved Spike deployment is not successful: ${deployHash}`);
+    wallet = deployReceipt.contractAddress;
+  } else {
+    deployHash = await walletClient.deployContract({ abi: artifact.abi, bytecode: artifact.bytecode, account, chain, value: parseEther("0.15"), gas: 6_000_000n, gasPrice: 2_000_000n });
+    fs.writeFileSync(runStatePath, JSON.stringify({ deployHash }) + "\n");
+    const deployReceipt = await publicClient.waitForTransactionReceipt({ hash: deployHash, timeout: 120_000, pollingInterval: 2_000 });
+    if (deployReceipt.status !== "success" || !deployReceipt.contractAddress) throw new Error(`Spike deployment failed: ${deployHash}`);
+    wallet = deployReceipt.contractAddress;
+  }
   const deployedCode = await publicClient.getCode({ address: wallet });
-  const artifactRuntime = (JSON.parse(fs.readFileSync(artifactPath, "utf8")) as { deployedBytecode: { object: Hex } }).deployedBytecode.object;
-  if (!deployedCode || keccak256(deployedCode) !== keccak256(artifactRuntime)) throw new Error("Spike runtime codehash mismatch");
-  finding("spike_deploy", { deployHash, wallet, runtimeCodehash: keccak256(deployedCode) });
+  if (!deployedCode) throw new Error("Spike deployment has no runtime code");
+  finding("spike_deploy", { deployHash, wallet, ...assertSpikeRuntime(deployedCode) });
   const signature = (`0x${"00".repeat(2420)}`) as Hex;
   const tx = newTx({
-    chainId: chain.id,
+    chainId: BigInt(chain.id),
     sender: wallet,
-    nonceSeq: await publicClient.getTransactionCount({ address: wallet, blockTag: "latest" }),
+    nonceSeq: BigInt(await publicClient.getTransactionCount({ address: wallet, blockTag: "latest" })),
     frames: [
       frame(profile, "VERIFY", { scope: "EXECUTION_AND_PAYMENT", target: null, execution: 3_200_000n, data: "0x01" }),
       frame(profile, "SENDER", { target: recipient, execution: 50_000n, state: 200_000n, value: 1_000_000_000n }),
@@ -122,14 +145,21 @@ async function main() {
   const hash = txHash(profile, tx);
   const canonical = await attempt(() => publicClient.request({ method: "eth_sendRawTransaction" as never, params: [encodeTx(profile, tx)] as never }));
   finding("canonical_arbitrary_verify", canonical);
+  if (canonicalMode) {
+    const raw = JSON.stringify(canonical);
+    if (canonical.accepted) throw new Error("canonical ARBITRARY VERIFY frame was unexpectedly accepted");
+    if (/nonce|malformed/i.test(raw) || !/(MAX_VERIFY_GAS|GREP-|REPUTATION-)/.test(raw)) throw new Error("canonical rejection was not a budget-type rule");
+    console.log(JSON.stringify({ ok: true, mode: "canonical", wallet, deployHash, txHash: hash, canonical }));
+    return;
+  }
   const sidecar = await attempt(() => publicClient.request({ method: "eth_sendFrameTransaction" as never, params: [toWire(tx)] as never }));
   finding("sidecar_unstaked_arbitrary_verify", sidecar);
   if (canonical.accepted || sidecar.accepted) throw new Error("expected both pre-stake ARBITRARY submissions to reject");
 
   const stakeTx = await signTx(profile, newTx({
-    chainId: chain.id,
+    chainId: BigInt(chain.id),
     sender: wallet,
-    nonceSeq: await publicClient.getTransactionCount({ address: wallet, blockTag: "latest" }),
+    nonceSeq: BigInt(await publicClient.getTransactionCount({ address: wallet, blockTag: "latest" })),
     frames: [
       frame(profile, "VERIFY", { scope: "EXECUTION_AND_PAYMENT", target: null, execution: 70_000n }),
       frame(profile, "SENDER", {

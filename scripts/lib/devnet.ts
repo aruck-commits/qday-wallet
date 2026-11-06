@@ -6,25 +6,32 @@ import { createPublicClient, defineChain, encodeFunctionData, http, type Address
 export const ethrexUrl = "https://altmempool.forshtat.com";
 export const gatewayUrl = "https://altmempoolgateway.forshtat.com/rpc";
 export const stakingRegistry = "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f" as Address;
-export const minimumBalance = 150_000_000_000_000_000n;
+export const minimumBalance = 200_000_000_000_000_000n;
 export const minimumStake = 10_000_000_000_000_000n;
 const chain = defineChain({ id: 1337, name: "EIP-8141 Workshop Devnet", nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, rpcUrls: { default: { http: [ethrexUrl] } } });
 export const ethrex = createPublicClient({ chain, transport: http(ethrexUrl) });
 export const gateway = createPublicClient({ chain, transport: http(gatewayUrl) });
 
-export async function preflight(payer: Address) {
+export async function preflightCanonical(payer: Address) {
   const firstBlock = await ethrex.getBlockNumber();
   await new Promise((resolve) => setTimeout(resolve, 15_000));
-  const [block, balance, peers] = await Promise.all([
-    ethrex.getBlockNumber(), ethrex.getBalance({ address: payer }), gateway.request({ method: "skandha_explorer_peers" as never, params: [] as never }),
-  ]);
-  const peerCount = Array.isArray(peers) ? peers.length : peers && typeof peers === "object" ? Object.keys(peers).length : 0;
-  const result = { firstBlock: firstBlock.toString(), block: block.toString(), balance: balance.toString(), peerCount, payer };
+  const [block, balance] = await Promise.all([ethrex.getBlockNumber(), ethrex.getBalance({ address: payer })]);
+  const result = { firstBlock: firstBlock.toString(), block: block.toString(), balance: balance.toString(), payer };
   if (block <= firstBlock) throw new Error(`ethrex stalled: ${firstBlock} -> ${block}; aborting`);
   if (balance < minimumBalance) throw new Error(`payer balance ${balance} below ${minimumBalance}`);
-  if (peerCount === 0) throw new Error("gateway→miner p2p down (Oct-24 signature), aborting");
   return result;
 }
+
+export async function preflightSidecar(payer: Address) {
+  const result = await preflightCanonical(payer);
+  const peers = await gateway.request({ method: "skandha_explorer_peers" as never, params: [] as never });
+  const peerCount = Array.isArray(peers) ? peers.length : peers && typeof peers === "object" ? Object.keys(peers).length : 0;
+  if (peerCount === 0) throw new Error("gateway→miner p2p down (Oct-24 signature), aborting");
+  return { ...result, peerCount };
+}
+
+/** Compatibility alias: historical callers required the stricter sidecar gate. */
+export const preflight = preflightSidecar;
 
 export async function readStake(wallet: Address) {
   const data = encodeFunctionData({ abi: [{ type: "function", name: "getDepositInfo", inputs: [{ type: "address" }], outputs: [{ type: "uint256" }, { type: "uint32" }, { type: "uint64" }], stateMutability: "view" }], functionName: "getDepositInfo", args: [wallet] });
@@ -33,18 +40,13 @@ export async function readStake(wallet: Address) {
 }
 
 export async function postResumePrepare(payer: Address, wallet: Address) {
-  const ready = await preflight(payer); const stake = await readStake(wallet);
+  const ready = await preflightSidecar(payer); const stake = await readStake(wallet);
   if (stake <= minimumStake) throw new Error(`stake ${stake} must be strictly greater than ${minimumStake}`);
   return { ...ready, stake: stake.toString(), wallet };
 }
 
-export async function recoverIfReset(_payer: Address) {
-  throw new Error("recovery writes are disabled until explicit resume execution authorization");
-}
-
-export async function submitWithResubmit(_payload: unknown) {
-  throw new Error("gateway submissions are disabled until explicit resume execution authorization");
-}
+export async function recoverIfReset(_payer: Address) { throw new Error("recovery writes are disabled until explicit resume execution authorization"); }
+export async function submitWithResubmit(_payload: unknown) { throw new Error("gateway submissions are disabled until explicit resume execution authorization"); }
 
 export async function simulateFallback(rawFrame: Hex) {
   const response = await ethrex.request({ method: "ethrex_simulateFrameTransaction" as never, params: [rawFrame] as never });
@@ -62,8 +64,7 @@ export async function pollFrameStatus(hash: `0x${string}`) {
   for (let index = 0; index < 60; index++) {
     const status = await gateway.request({ method: "skandha_frameTransactionStatus" as never, params: [hash] as never });
     statuses.push(status);
-    const text = JSON.stringify(status);
-    if (/Cancelled|Expired|OnChain/.test(text)) break;
+    if (/Cancelled|Expired|OnChain/.test(JSON.stringify(status))) break;
     await new Promise((resolve) => setTimeout(resolve, 5_000));
   }
   return statuses;

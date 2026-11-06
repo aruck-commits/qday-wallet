@@ -10,11 +10,10 @@
     "demo:mempool": "tsx scripts/demo_mempool.ts",
     "arkiv:sync": "tsx scripts/arkiv_sync.ts",
     "deploy:sepolia": "tsx scripts/deploy_sepolia.ts",
-    "ens:register": "tsx scripts/ens_register.ts",
-    "arkiv:sync": "tsx scripts/arkiv_sync.ts"
+    "ens:register": "tsx scripts/ens_register.ts"
   },
   "dependencies": {
-    "@arkiv-network/sdk": "^1.0.1",
+    "@arkiv-network/sdk": "1.0.1",
     "@forshtat/hegota-support": "0.0.1",
     "@noble/post-quantum": "^0.5.4",
     "viem": "^2.57.7"

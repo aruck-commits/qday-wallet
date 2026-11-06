@@ -1,5 +1,5 @@
 import "@fontsource-variable/space-grotesk";
-import "@fontsource/ibm-plex-mono";
+import "@fontsource/space-mono/400.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import evidenceJson from "./data/demoEvidence.json";
@@ -14,6 +14,7 @@ import { S4Identity } from "./screens/S4Identity";
 import { S5Architecture } from "./screens/S5Architecture";
 import "./style.css";
 import "./screen-overrides.css";
+import "./brand-font.css";
 
 const evidence = evidenceJson as DemoEvidence;
 const nav: { id: Screen; label: string }[] = [{ id: "hero", label: "S0 / HERO" }, { id: "console", label: "S1 / DEMO" }, { id: "key", label: "S2 / KEY" }, { id: "registry", label: "S3 / REGISTRY" }, { id: "identity", label: "S4 / IDENTITY" }, { id: "architecture", label: "S5 / ARCH" }];

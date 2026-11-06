@@ -12,10 +12,10 @@ Q-Day Wallet is a quantum-safe smart-wallet prototype using NIST ML-DSA-44 (FIPS
 | G3 addresses | Factory `0xa37d3a42c4117bafe189dd21b6170a96f17406b3`, verifier `0x17b01049d4790091ac911ead126337abae1517e4`, wallet `0xc5a8cb266cf7f56dcf017a5f766bf927c189091f` |
 | Precompute | [registerA](https://explorer.altmempool.wtf/0xc6fad77d74ac18a9a7afa91e048b044b554dba2263661ad62791ad9009279452), [registerT](https://explorer.altmempool.wtf/0x24ce10d1dfda5e2d6bb251020730fc42581a016bb1c3ef424140aa7872055060) |
 | ENS registration | [qdaywallet.eth register tx](https://sepolia.etherscan.io/tx/0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1) |
-| Arkiv | Entity `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048` |
+| Arkiv + Swarm | Entity `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048`; [passport reference](https://bzz.limo/bzz/81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74), [Arkiv patch tx](https://rabdi.explorer.arkiv.network/tx/0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5) |
 | Gas | Our verify average **2,664,784**; pinned reference **2,689,594**; see `docs/GAS.md` |
 
-The staked G1 admission, mined G3 PQ frame, ENS PQ write/rotation, and Swarm byte-equal read-back remain unavailable in this run. The demo shows those states as unavailable rather than inventing transaction links.
+The staked G1 admission, mined G3 PQ frame, and ENS PQ write/rotation remain unavailable in this run. The Swarm passport now has a byte-equal public read-back and Arkiv patch evidence.
 
 ## ENS final state
 

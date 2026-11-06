@@ -98,7 +98,8 @@ async function main() {
   const sidecarOnly = process.argv.includes("--sidecar");
   if (process.argv.includes("--preflight")) {
     const account = privateKeyToAccount(readParticipantKey());
-    console.log(JSON.stringify({ ok: true, mode: canonicalOnly ? "canonical" : "sidecar", ...((canonicalOnly ? preflightCanonical : preflightSidecar)(account.address)) }));
+    const readiness = await (canonicalOnly ? preflightCanonical : preflightSidecar)(account.address);
+    console.log(JSON.stringify({ ok: true, mode: canonicalOnly ? "canonical" : "sidecar", ...readiness }));
     return;
   }
   if ((canonicalOnly ? 1 : 0) + (canonicalSubmit ? 1 : 0) + (sidecarOnly ? 1 : 0) !== 1) throw new Error("demo:spike requires --canonical, --canonical-submit, or --sidecar");
@@ -113,9 +114,9 @@ async function main() {
   const artifact = readArtifact();
   let deployHash: Hex;
   let wallet: Address;
-  if (canonicalSubmit) {
+  if (canonicalSubmit || sidecarOnly) {
     const saved = JSON.parse(fs.readFileSync(runStatePath, "utf8")) as SpikeState;
-    if (!saved.deployHash) throw new Error("canonical-submit requires a prior canonical deployment state");
+    if (!saved.deployHash) throw new Error("resume mode requires a prior canonical deployment state");
     deployHash = saved.deployHash;
     const deployReceipt = await publicClient.getTransactionReceipt({ hash: deployHash });
     if (deployReceipt.status !== "success" || !deployReceipt.contractAddress) throw new Error(`saved Spike deployment is not successful: ${deployHash}`);

@@ -45,3 +45,5 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
   · storage read of non-owned contract in VERIFY frame = canonical reject `StorageReadNonSender`
     (workshop-proven pattern, analogous to our >budget case).
   · violation discriminator = non-empty frame data (empty = clean path) → our clean/PQ branch design.
+
+- {"gate":"G1","error":{"code":null,"rule":null,"hint":null,"message":"ethrex stalled at 408262; aborting"}}

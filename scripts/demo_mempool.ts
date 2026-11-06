@@ -1,10 +1,8 @@
+import { privateKeyToAccount } from "viem/accounts";
 import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { preflight } from "./lib/devnet.js";
 
-const statePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../tooling/mempool-workshop/.qday-mempool-state.json");
 const stages = ["A canonical ARBITRARY rejection", "B unstaked sidecar rejection", "C clean-path 0.012 ETH stake", "D staked sidecar admission and mining"];
-
-if (process.argv.includes("--execute")) throw new Error("Devnet execution is disabled while ethrex is stalled at block 408262");
-fs.writeFileSync(statePath, JSON.stringify({ planned: true, fresh: process.argv.includes("--fresh"), stages }, null, 2));
-console.log(JSON.stringify({ ok: true, executed: false, statePath, stages }));
+const state = JSON.parse(fs.readFileSync("tooling/mempool-workshop/.workshop-state.json", "utf8")) as { participantKey: `0x${string}` };
+if (!process.argv.includes("--preflight")) throw new Error("Use --preflight only until explicit resume authorization");
+console.log(JSON.stringify({ ok: true, mode: "preflight", ...(await preflight(privateKeyToAccount(state.participantKey).address)), stages }));

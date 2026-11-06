@@ -13,6 +13,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { profile } from "@forshtat/hegota-support/profiles/ethrex-eip8141-tracer";
 import { encodeTx, frame, newTx, sigScheme, txHash } from "@forshtat/hegota-support/tx";
 import { toWire } from "@forshtat/hegota-support/rpc";
+import { appendFinding, preflight } from "./lib/devnet.js";
 
 const gatewayUrl = "https://altmempoolgateway.forshtat.com/rpc";
 const recipient = "0x8943545177806ED17B9F23F0a21ee5948eCaa776" as const;
@@ -72,6 +73,7 @@ async function attempt(send: () => Promise<Hex>): Promise<{ accepted: true; hash
 }
 
 async function main() {
+  if (process.argv.includes("--preflight")) { const account = privateKeyToAccount(readParticipantKey()); console.log(JSON.stringify({ ok: true, mode: "preflight", ...(await preflight(account.address)) })); return; }
   if (process.argv.length !== 2) throw new Error("demo:spike accepts no arguments");
   const privateKey = readParticipantKey();
   const account = privateKeyToAccount(privateKey);
@@ -117,6 +119,7 @@ async function main() {
 }
 
 main().catch((error) => {
+  appendFinding({ gate: "G1", error: rejection(error) });
   console.log(JSON.stringify({ ok: false, error: rejection(error) }));
   process.exitCode = 1;
 });

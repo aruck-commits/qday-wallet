@@ -4,10 +4,12 @@
   "type": "module",
   "scripts": {
     "build:contracts": "forge build --root contracts",
-    "demo:spike": "tsx scripts/g1-spike.ts"
+    "demo:spike": "tsx scripts/g1-spike.ts",
+    "gen:vectors": "tsx scripts/gen_vectors.ts"
   },
   "dependencies": {
     "@forshtat/hegota-support": "0.0.1",
+    "@noble/post-quantum": "^0.5.4",
     "viem": "^2.57.7"
   },
   "devDependencies": {

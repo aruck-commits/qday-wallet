@@ -14,6 +14,7 @@ and are reflected here at G2.
 | MLDSAKeyFactory.registerA (pk precompute) | 5,542,745 | mldsa-solidity README |
 | MLDSAKeyFactory.registerT/trie line | 2,290,093 | mldsa-solidity README |
 | verify gas slope | +89,077 per 136-byte message increment | mldsa-solidity README |
+| executePq + registered ML-DSA-44 verify | **3,065,186** | [measured] Forge vector test, includes wallet intent/call overhead |
 | comparison: ECDSA-of-ECDSA "quantum emergency" wallet cited by Fireblocks | 1,234,201 | Fireblocks Dilithium blog post (2023) |
 
 ## Frame-tx budgets (devnet knobs; G1 asserts the real enforced limits)

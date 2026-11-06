@@ -1,0 +1,24 @@
+import { createHash } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { ml_dsa44 } from "@noble/post-quantum/ml-dsa.js";
+import { encodeAbiParameters, encodeFunctionData, getContractAddress, keccak256, parseAbiParameters } from "viem";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const hex = (value: Uint8Array) => `0x${Buffer.from(value).toString("hex")}`;
+const seed = createHash("sha256").update("qday-wallet-g2-fixture-v1").digest();
+const scenario = { chainid: 31337n, timestamp: 1n, deadline: 86401n, pqNonce: 0n, walletDeployer: "0xA11Ce00000000000000000000000000000000001" as const, targetDeployer: "0xA11Ce00000000000000000000000000000000002" as const };
+const walletAddr = getContractAddress({ from: scenario.walletDeployer, nonce: 0n }); const targetAddr = getContractAddress({ from: scenario.targetDeployer, nonce: 0n });
+const callData = encodeFunctionData({ abi: [{ type: "function", name: "set", inputs: [{ type: "uint256" }], outputs: [], stateMutability: "nonpayable" }], functionName: "set", args: [7n] });
+const intent = keccak256(encodeAbiParameters(parseAbiParameters("string, uint256, address, address, bytes32, uint256, uint256"), ["QDAY_INTENT_V1", scenario.chainid, walletAddr, targetAddr, keccak256(callData), scenario.pqNonce, scenario.deadline]));
+const key = ml_dsa44.keygen(seed);
+const validSig = ml_dsa44.sign(Buffer.from(intent.slice(2), "hex"), key.secretKey);
+const invalidSig = Uint8Array.from(validSig);
+invalidSig[0] ^= 1;
+const fixture = { note: "forge-test sample keypair, chainid 31337 only, never fund", scenario: { ...scenario, chainid: Number(scenario.chainid), timestamp: Number(scenario.timestamp), deadline: Number(scenario.deadline), pqNonce: Number(scenario.pqNonce), walletAddr, targetAddr, callData, intent }, pk: hex(key.publicKey), testKeySecret: hex(key.secretKey), validSig: hex(validSig), invalidSig: hex(invalidSig) };
+if (key.publicKey.length !== 1312 || validSig.length !== 2420 || !ml_dsa44.verify(validSig, Buffer.from(intent.slice(2), "hex"), key.publicKey) || ml_dsa44.verify(invalidSig, Buffer.from(intent.slice(2), "hex"), key.publicKey)) throw new Error("vector assertion failed");
+const output = path.join(root, "contracts/test/fixtures/pq.json");
+fs.mkdirSync(path.dirname(output), { recursive: true });
+fs.writeFileSync(output, `${JSON.stringify(fixture, null, 2)}\n`);
+console.log(JSON.stringify({ ok: true, fixture: "contracts/test/fixtures/pq.json", pkBytes: key.publicKey.length, sigBytes: validSig.length }));

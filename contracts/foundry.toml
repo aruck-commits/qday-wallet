@@ -7,3 +7,4 @@ solc_version = "0.8.28"
 via_ir = true
 evm_version = "cancun"
 remappings = ["@forshtat/hegota-support/=lib/hegota-support/", "forge-std/=lib/mldsa-solidity/lib/forge-std/src/"]
+fs_permissions = [{ access = "read", path = "./test/fixtures" }]

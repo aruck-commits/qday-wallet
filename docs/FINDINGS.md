@@ -10,6 +10,8 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## decisions
 
+- 2026-11-07 · Ω-5 UI verification · `bun run app:build` passed with Vite production output; Vite preview smoke returned HTTP 200 at `http://127.0.0.1:4173/`. The app keeps missing staked/PQ/Swarm artifacts unavailable and exposes DRY RUN mode visibly.
+
 - 2026-11-07 · Ω-4 gateway approval hard-stop · The Swarm POST returned HTTP 200 and reference `33fc453e27911eedfac9e2dee76f306322f440ff520c6058458df8a2a3459b60`; both public GET attempts returned the gateway's 5496-byte Request Approval HTML, not the 388-byte passport (`expectedSha256 b0b64893fa351ef31e28d1a75e65db1398595703d4309ad69d8e989d99085bda`, `observedSha256 690fc63278a99804d731f8ddc3fcf1ad8cc7e20648aaa3d07306b6cbcd655b99`). No Arkiv patch was made.
 
 - 2026-11-07 · Ω-3 HARD-STOP 2 · `ens_write.ts` was attempted twice. Both simulations reverted before broadcast with the exact signature `0x4b27a133` and viem reported `execution reverted`; no transaction hash exists. Decision: do not guess the missing PermissionedResolver role or fabricate a write/read-back; proceed to Ω-4 per the runbook.

@@ -1,5 +1,7 @@
 # Swarm passport
 
+**Bonus status: not claimed.** The bonus rules require a postage batch ID and the wallet that bought it. We have neither, so this project does not select the Arkiv + Swarm bonus at submission. The integration below is real, but it does not meet the batch requirement.
+
 ## What is on Swarm vs Arkiv
 - **Swarm:** the public migration passport JSON (wallet, PQ key hash, verifier, ENS name, Arkiv entity key, gas figures). 388 bytes.
 - **Arkiv:** the `qday.migration` entity. Its `swarmRef` field holds the Swarm reference.

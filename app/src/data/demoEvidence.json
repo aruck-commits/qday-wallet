@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-11-06T10:23:11.767Z",
+  "mode": "DRY RUN",
+  "demo": {
+    "canonical": {
+      "verdict": "REJECTED",
+      "rule": "MAX_VERIFY_GAS",
+      "rawAvailable": true
+    },
+    "unstaked": {
+      "verdict": "REJECTED",
+      "rule": "OOG",
+      "detail": "ran out of gas (Out Of Gas)",
+      "rawAvailable": true
+    },
+    "staked": {
+      "verdict": "UNAVAILABLE",
+      "txHash": null,
+      "explorerUrl": null,
+      "reason": "gateway-to-miner peer gate was empty; no admitted frame was resubmitted"
+    },
+    "pq": {
+      "verdict": "UNAVAILABLE",
+      "txHash": null,
+      "explorerUrl": null,
+      "reason": "G3 skipped-risk while sidecar peer gate was empty"
+    }
+  },
+  "ens": {
+    "wallet": "0xe104a972a2d18a09744b66fb5886f5271a5cc9b0",
+    "registerTx": "0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1",
+    "explorerUrl": "https://sepolia.etherscan.io/tx/0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1",
+    "name": "qdaywallet.eth"
+  },
+  "arkiv": {
+    "entity": "0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048",
+    "swarmRef": null
+  },
+  "gas": {
+    "measuredVerify": "2,664,784",
+    "pinnedRegistered": "2,689,594",
+    "canonicalBudget": "~100,000"
+  }
+}

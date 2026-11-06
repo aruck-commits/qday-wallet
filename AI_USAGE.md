@@ -39,3 +39,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-06 | Codex | G4 ERC1155 receiver fix, wallet redeploy, and ENSv2 registration | prompts/2026-11-06-g1-g2-lanes.md |
 | 2026-11-06 | Codex | G1 raw RPC evidence capture and sidecar-gate monitoring | prompts/2026-11-06-g1-g2-lanes.md |
 | 2026-11-06 | Codex | overnight execution runbook and G1 risk-gated finalization | prompts/2026-11-06-g1-g2-lanes.md |
+| 2026-11-06 | Codex | G6 evidence pipeline and honest dry-run evidence model | prompts/2026-11-06-prompt-beta-ui.md |

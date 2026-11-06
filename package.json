@@ -10,7 +10,8 @@
     "demo:mempool": "tsx scripts/demo_mempool.ts",
     "arkiv:sync": "tsx scripts/arkiv_sync.ts",
     "deploy:sepolia": "tsx scripts/deploy_sepolia.ts",
-    "ens:register": "tsx scripts/ens_register.ts"
+    "ens:register": "tsx scripts/ens_register.ts",
+    "evidence": "node scripts/export-evidence.mjs"
   },
   "dependencies": {
     "@arkiv-network/sdk": "1.0.1",

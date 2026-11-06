@@ -164,3 +164,31 @@ Format: gate Â· UTC time Â· what we tried Â· verbatim result Â· action taken.
 - {"gate":"G4","stage":"ens_rotate","entry":{"ok":true,"digest":"0xca70cadedfb4cc6b6002eb84acc1c609d21357ce049aa00073f2353ebc8bc35f","txHash":"0x14716ba1b4bd02b2b1851211d7d2f9fc499cf10123a834deb048520d9057dafb","txUrl":"https://sepolia.etherscan.io/tx/0x14716ba1b4bd02b2b1851211d7d2f9fc499cf10123a834deb048520d9057dafb","note":"ENS ownership/readback verification follows the write lane"}}
 
 - 2026-11-06 · stake readback (frozen in docs/evidence) · registry getDepositInfo(0xf2bae312209239cb623c23d2f131269fc5f46006) returns amount 12000000000000000 wei (0.012 ETH) and unstakeDelay 86400. The accepted stake frame 0xc8703b08… still has no receipt on the gateway, and no registry log is indexed under that subject. The mining transaction for the stake is therefore NOT identified; the evidence lists the accepted hash as a submission only.
+
+- {"gate":"G1","stage":"preflight_sidecar","response":{"firstBlock":"7376","block":"7379","balance":"549660836018000000","payer":"0x3b7CdFf8ED99272338abF93A3B31b13421f779b1","peerCount":1}}
+
+- {"gate":"G1","stage":"spike_deploy","response":{"deployHash":"0x6034f81ae7704638f746845078afd16e34f13ed82774d16dc85604e1ed61028b","wallet":"0xf2bae312209239cb623c23d2f131269fc5f46006","runtimeCodehash":"0xc94a6ed5ca5e26c9715e4959e6cfffdf8ccbcfb584b1c056bad71facd8408528","normalizedRuntimeCodehash":"0xba07c5433c6a68a3495505cdb1f57713817fcc04d8f2997634ebdde0802a2ab1"}}
+
+- {"gate":"G1","stage":"sidecar_unstaked_arbitrary_verify_raw_supersedes_wrapper","response":{"accepted":false,"raw":{"jsonrpc":"2.0","id":1,"error":{"message":"validation frame 0: ran out of gas (Out Of Gas)","code":-32500}}}}
+
+- {"gate":"G1","stage":"self_stake_sender_frame","response":{"accepted":true,"hash":"0x58ab1529a3a908188f0f4e09968d46a4985bd6b72d4f8fb577fce5147875d678","raw":{"jsonrpc":"2.0","id":1,"result":"0x58ab1529a3a908188f0f4e09968d46a4985bd6b72d4f8fb577fce5147875d678"}}}
+
+- {"gate":"G1","error":{"error":"TypeError: Do not know how to serialize a BigInt","chain":[{"message":"Do not know how to serialize a BigInt"}]}}
+
+- 2026-11-07 · self-stake frame 0x58ab1529a3a908188f0f4e09968d46a4985bd6b72d4f8fb577fce5147875d678 · accepted by sidecar, MINED at block 7385 (status 0x1). Registry readback for 0xf2bae312209239cb623c23d2f131269fc5f46006 now 24000000000000000 wei (0.024 ETH: two 0.012 ETH stakes), unstakeDelay 86400. This is the mined stake transaction; the earlier accepted hash 0xc8703b08... was never mined. Run aborted at a BigInt logging bug (fixed in scripts/lib/devnet.ts). Staked PQ frame not yet submitted.
+
+- {"gate":"G1","stage":"preflight_sidecar","response":{"firstBlock":"7394","block":"7397","balance":"549660836018000000","payer":"0x3b7CdFf8ED99272338abF93A3B31b13421f779b1","peerCount":1}}
+
+- {"gate":"G1","stage":"spike_deploy","response":{"deployHash":"0x6034f81ae7704638f746845078afd16e34f13ed82774d16dc85604e1ed61028b","wallet":"0xf2bae312209239cb623c23d2f131269fc5f46006","runtimeCodehash":"0xc94a6ed5ca5e26c9715e4959e6cfffdf8ccbcfb584b1c056bad71facd8408528","normalizedRuntimeCodehash":"0xba07c5433c6a68a3495505cdb1f57713817fcc04d8f2997634ebdde0802a2ab1"}}
+
+- {"gate":"G1","stage":"sidecar_staked_arbitrary_verify_staked_only","response":{"accepted":false,"raw":{"jsonrpc":"2.0","id":1,"error":{"message":"validation frame 0: ran out of gas (Out Of Gas)","code":-32500}}}}
+
+- 2026-11-07 · staked-only admission (stake 0.024 ETH) rejected by sidecar with validation frame 0: ran out of gas (Out Of Gas) at PQ_VERIFY_LIMIT 3200000. Same error as the unstaked attempt, so stake is not the blocker. Next: retry with the spec's full-compute VERIFY limit 6500000 (PQ_VERIFY_LIMIT=6500000).
+
+- {"gate":"G1","stage":"preflight_sidecar","response":{"firstBlock":"7401","block":"7404","balance":"549660836018000000","payer":"0x3b7CdFf8ED99272338abF93A3B31b13421f779b1","peerCount":1}}
+
+- {"gate":"G1","stage":"spike_deploy","response":{"deployHash":"0x6034f81ae7704638f746845078afd16e34f13ed82774d16dc85604e1ed61028b","wallet":"0xf2bae312209239cb623c23d2f131269fc5f46006","runtimeCodehash":"0xc94a6ed5ca5e26c9715e4959e6cfffdf8ccbcfb584b1c056bad71facd8408528","normalizedRuntimeCodehash":"0xba07c5433c6a68a3495505cdb1f57713817fcc04d8f2997634ebdde0802a2ab1"}}
+
+- {"gate":"G1","stage":"sidecar_staked_arbitrary_verify_staked_only","response":{"accepted":false,"raw":{"jsonrpc":"2.0","id":1,"error":{"message":"validation frame 0: ran out of gas (Out Of Gas)","code":-32500}}}}
+
+- 2026-11-07 · staked-only admission at PQ_VERIFY_LIMIT 6500000 (stake 0.024 ETH, mined) rejected by sidecar with validation frame 0: ran out of gas (Out Of Gas), code -32500. Same error at 3200000 and when unstaked. Conclusion: neither stake nor the declared VERIFY limit changes the outcome; the sidecar's validation budget for this ML-DSA-44 frame is the blocker. Open question for the devnet operator: what verification budget the sidecar enforces for staked entities.

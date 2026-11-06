@@ -58,7 +58,7 @@ export async function simulateFallback(rawFrame: Hex) {
 
 export function appendFinding(entry: unknown) {
   const file = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../docs/FINDINGS.md");
-  fs.appendFileSync(file, `\n- ${JSON.stringify(entry)}\n`);
+  fs.appendFileSync(file, `\n- ${JSON.stringify(entry, (_, value) => (typeof value === "bigint" ? value.toString() : value))}\n`);
 }
 
 export async function pollFrameStatus(hash: `0x${string}`) {

@@ -141,7 +141,7 @@ async function main() {
     sender: wallet,
     nonceSeq: BigInt(await publicClient.getTransactionCount({ address: wallet, blockTag: "latest" })),
     frames: [
-      frame(profile, "VERIFY", { scope: "EXECUTION_AND_PAYMENT", target: null, execution: 3_200_000n, data: "0x01" }),
+      frame(profile, "VERIFY", { scope: "EXECUTION_AND_PAYMENT", target: null, execution: BigInt(process.env.PQ_VERIFY_LIMIT ?? "3200000"), data: "0x01" }),
       frame(profile, "SENDER", { target: recipient, execution: 50_000n, state: 200_000n, value: 1_000_000_000n }),
     ],
     signatures: [{ scheme: sigScheme(profile, "ARBITRARY"), signer: "0x", msg: "0x", signature }],
@@ -155,6 +155,21 @@ async function main() {
     if (canonical.accepted) throw new Error("canonical ARBITRARY VERIFY frame was unexpectedly accepted");
     if (/nonce|malformed/i.test(raw) || !/(MAX_VERIFY_GAS|GREP-|REPUTATION-)/.test(raw)) throw new Error("canonical rejection was not a budget-type rule");
     console.log(JSON.stringify({ ok: true, mode: "canonical", wallet, deployHash, txHash: hash, canonical }));
+    return;
+  }
+  if (process.argv.includes("--staked-only")) {
+    const existingStake = await readStake(wallet as Address);
+    if (existingStake <= parseEther("0.01")) throw new Error(`wallet is not staked above 0.01 ETH (${existingStake}); refusing staked-only run`);
+    const stakedOnly = await rawRpc(gatewayUrl, "eth_sendFrameTransaction", [toWire(tx)]);
+    finding("sidecar_staked_arbitrary_verify_staked_only", stakedOnly);
+    if (!stakedOnly.accepted) { console.log(JSON.stringify({ ok: false, mode: "staked-only", stakeWei: existingStake.toString(), stakedOnly })); process.exitCode = 1; return; }
+    const onChainStatuses = await pollFrameStatus(stakedOnly.hash);
+    for (const status of onChainStatuses) finding("sidecar_staked_status", status);
+    const reached = /OnChain/.test(JSON.stringify(onChainStatuses.at(-1)));
+    const explorer = `https://explorer.altmempool.wtf/${stakedOnly.hash}`;
+    finding("explorer_link", { hash: stakedOnly.hash, explorerUrl: explorer, onChain: reached });
+    console.log(JSON.stringify({ ok: reached, mode: "staked-only", wallet, txHash: hash, stakeWei: existingStake.toString(), hash: stakedOnly.hash, explorerUrl: explorer }));
+    if (!reached) process.exitCode = 1;
     return;
   }
   const sidecar = await rawRpc(gatewayUrl, "eth_sendFrameTransaction", [toWire(tx)]);

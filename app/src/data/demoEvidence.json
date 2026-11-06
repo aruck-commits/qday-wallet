@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T16:47:06.408Z",
+  "generatedAt": "2026-11-06T16:48:07.054Z",
   "exportMode": "live-read-only",
   "account": {
     "address": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
@@ -18,7 +18,7 @@
     "devnet": {
       "chainId": 1337,
       "participant": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
-      "lastBlock": 6181,
+      "lastBlock": 6192,
       "balanceWei": "549660836018000000",
       "balanceEth": "0.549661",
       "stakeSubject": "0xf2bae312209239cb623c23d2f131269fc5f46006",
@@ -30,7 +30,7 @@
     },
     "sepolia": {
       "chainId": 11155111,
-      "latestBlock": 12077832,
+      "latestBlock": 12077837,
       "error": null
     }
   },

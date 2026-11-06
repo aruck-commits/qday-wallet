@@ -1,0 +1,13 @@
+{
+  "name": "qdaywallet.eth",
+  "resolver": "0x863b62fA8988Ba340C24F389FFDF568b3ccbc8e4",
+  "textKey": "pq-key",
+  "value": "sha256:0df74bba1ed130f54299f6cf7f703b54dd170ea29429665774cf9cb29b78d440",
+  "readBack": "sha256:0df74bba1ed130f54299f6cf7f703b54dd170ea29429665774cf9cb29b78d440",
+  "steps": {
+    "deployProxy": "0x39400773627347d8cb54b8cc6c17595e2565ef55dd3372a67d1223b1f9713ac4",
+    "setResolver": "0xc1c1a9cacca31c3beae15a914c0e9a3deb86aeca203f75bd2014eb6d78b11488",
+    "grantSetterRoles": "0x0d0b2de8be92871d5e91d64e4292352fe22f3f45c38ab961da743957ca6a041d",
+    "setText": "0x67533e9254cda1c0e8f543d5e158076ef9b8d08a215c358460c26c15c59178bd"
+  }
+}

@@ -10,6 +10,11 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## decisions
 
+- 2026-11-07 · Ω-1 deploy gas decision · The mandatory first factory deployment attempt mined as `reverted` with `gasUsed: 6000000` and no code. To make the primary deployment executable, the retry uses 12000000 only for `MLDSAKeyFactory` creation; verifier and QDayWallet remain capped at 6000000. This is a measured artifact-size constraint, not a rule guess.
+- 2026-11-07 · Ω-1 deploy gas measurement · A read-only `eth_estimateGas` on the exact factory creation bytecode returned `45159245`; the 6000000 and 12000000 attempts both mined reverted at their caps. The execution retry therefore uses a bounded 50000000 factory-creation cap; verifier/QDayWallet remain 6000000.
+- 2026-11-07 · Ω-1 deploy gas measurement · Factory retry succeeded at `0xa37d3a42c4117bafe189dd21b6170a96f17406b3` with `gasUsed: 43447750`; verifier creation estimate for that factory is `36270551`, so the runner reuses the observed factory and caps verifier creation at 40000000.
+- 2026-11-07 · Ω-1 wallet gas measurement · The funded QDayWallet creation attempt mined reverted at `gasUsed: 6000000`; read-only estimation of the exact constructor with 0.15 ETH returned `17112936`. The retry uses an 18000000 wallet-creation cap; the requested value and legacy gas price are unchanged.
+
 - 2026-11-06 · G6 evidence export · Decision: emitted explicit `UNAVAILABLE`/`null` fields for the unmined G1 staked frame, G3 PQ frame, and Swarm passport. Reason: the committed raw evidence records an empty gateway-to-miner peer gate and no mined artifacts; the UI must not manufacture links or verdicts.
 
 - 2026-11-06 · G1 sidecar finalization SKIPPED-RISK · Decision: after two zero-peer preflight failures, do not submit the staked frame or retry an admitted/known payload. Reason: the runbook and AGENTS.md require an empty gateway→miner P2P link to be a hard stop; canonical raw evidence remains valid and exact.
@@ -106,3 +111,19 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 - {"gate":"G1","error":{"error":"Error: gateway→miner p2p down (Oct-24 signature), aborting","chain":[{"message":"gateway→miner p2p down (Oct-24 signature), aborting"}]}}
 
 - {"gate":"G1","error":{"error":"Error: gateway→miner p2p down (Oct-24 signature), aborting","chain":[{"message":"gateway→miner p2p down (Oct-24 signature), aborting"}]}}
+
+- {"gate":"G3","stage":"deploy_and_precompute_error","result":{"ok":false,"error":"MLDSAKeyFactory deployment failed: 0xbdfa6d94438bd5522727f2ebba7fbe04dbf141d7733ab186e0a5930e61e56acf"}}
+
+- {"gate":"G3","stage":"deploy_and_precompute_error","result":{"ok":false,"error":"MLDSAKeyFactory deployment failed: 0xd61030ede9b2842f543f7a9de97aee226cfebbdb8e8b9d0f216afcddfc3c0809"}}
+
+- {"gate":"G3","stage":"deploy_and_precompute_error","result":{"ok":false,"error":"MLDSAVerifier deployment failed: 0xc0f18573b5cef3340dda323ddcc9e62a4f2dd9632ae4a97438060404782b1ccd"}}
+
+- {"gate":"G3","stage":"deploy_and_precompute_error","result":{"ok":false,"error":"registerA failed: 0x450884fa05dfae94c0a2717ac3c794d06064404728c341d69b32ca64bdb9bc8a"}}
+
+- {"gate":"G3","stage":"deploy_and_precompute_error","result":{"ok":false,"error":"QDayWallet deployment failed: 0x1b65ee194db8ee801bef8aafa60e522f901ee31735d1ffc626518606852d89a4"}}
+
+- {"gate":"G3","stage":"deploy_and_precompute_error","result":{"ok":false,"error":"The contract function \"tAddress\" returned no data (\"0x\").\n\nThis could be due to any of the following:\n  - The contract does not have the function \"tAddress\",\n  - The parameters passed to the contract function may be invalid, or\n  - The address is not a contract.\n \nContract Call:\n  address:   0xa37d3a42c4117bafe189dd21b6170a96f17406b3\n  function:  tAddress(uint8, bytes32)\n  args:              (0, 0x8aa4af90d245a98bd7dad00b7cb74a3b0b930e180ed0c971c38901b4b2c9869a)\n\nDocs: https://viem.sh/docs/contract/readContract\nVersion: viem@2.57.16"}}
+
+- {"gate":"G3","stage":"deploy_and_precompute","result":{"participant":"0x3b7CdFf8ED99272338abF93A3B31b13421f779b1","txHashes":{"QDayWallet":"0xb83ab344ad0ebacf39721ac0d236a9e76d798e95f66f18d5ff0e41fc424b56cf"},"liveness":{"before":"2667","after":"2670"},"factory":"0xa37d3a42c4117bafe189dd21b6170a96f17406b3","verifier":"0x17b01049d4790091ac911ead126337abae1517e4","wallet":"0xc5a8cb266cf7f56dcf017a5f766bf927c189091f","registry":{"a":"0x6E381DD361535Fee2F3a702DeCc8120746fE7f86","t":"0x109c4482EE47ED22253481c6Dbb1440c933C3BEB"}}}
+
+- {"gate":"G3","stage":"deploy_and_precompute","result":{"participant":"0x3b7CdFf8ED99272338abF93A3B31b13421f779b1","txHashes":{"MLDSAKeyFactory":"0x0d85e0dcab5b296c02356bd9efc46d380721362d70d5d860d85dcf45cf107b21","MLDSAVerifier":"0xc340e9ac36c0c1faf2cf5231b81b27464ea80afd18318f6efd24b32de3dfb00d","registerA":"0xc6fad77d74ac18a9a7afa91e048b044b554dba2263661ad62791ad9009279452","registerT":"0x24ce10d1dfda5e2d6bb251020730fc42581a016bb1c3ef424140aa7872055060","QDayWallet":"0xb83ab344ad0ebacf39721ac0d236a9e76d798e95f66f18d5ff0e41fc424b56cf"},"liveness":{"before":"2684","after":"2686"},"factory":"0xa37d3a42c4117bafe189dd21b6170a96f17406b3","verifier":"0x17b01049d4790091ac911ead126337abae1517e4","wallet":"0xc5a8cb266cf7f56dcf017a5f766bf927c189091f","registry":{"a":"0x6E381DD361535Fee2F3a702DeCc8120746fE7f86","t":"0x109c4482EE47ED22253481c6Dbb1440c933C3BEB"}}}

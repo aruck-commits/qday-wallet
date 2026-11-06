@@ -40,3 +40,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-06 | Codex | G1 raw RPC evidence capture and sidecar-gate monitoring | prompts/2026-11-06-g1-g2-lanes.md |
 | 2026-11-06 | Codex | overnight execution runbook and G1 risk-gated finalization | prompts/2026-11-06-g1-g2-lanes.md |
 | 2026-11-06 | Codex | G6 evidence pipeline and honest dry-run evidence model | prompts/2026-11-06-prompt-beta-ui.md |
+| 2026-11-07 | Codex | Omega runbook and G3 fresh-chain deployment/precompute | prompts/2026-11-07-omega.md |

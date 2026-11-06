@@ -26,4 +26,4 @@
 - [ ] Mined G3 PQ frame URL — sidecar gate remained unavailable.
 - [ ] ENS PQ write/rotation URLs — resolver text role is unreachable; proof is in FINDINGS.
 - [x] Swarm byte-equal public read-back and Arkiv `swarmRef` patch.
-- [ ] Human: record video, prepare booth equipment, and perform final DRY RUN self-check before the Sat Nov 7 09:00 IST deadline.
+- [ ] Human: record video, prepare booth equipment, and perform the final evidence self-check before the Sat Nov 7 09:00 IST deadline.

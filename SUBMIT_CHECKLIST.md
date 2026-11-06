@@ -9,6 +9,10 @@
 | G3 verifier | https://explorer.altmempool.wtf/0xc340e9ac36c0c1faf2cf5231b81b27464ea80afd18318f6efd24b32de3dfb00d |
 | G3 wallet | https://explorer.altmempool.wtf/0xb83ab344ad0ebacf39721ac0d236a9e76d798e95f66f18d5ff0e41fc424b56cf |
 | Arkiv entity | 0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048 |
+| SpikeWallet deploy | `0x6034f81a…` (recorded workshop anchor; full raw entry in FINDINGS) |
+| Workshop stake | `step_7_stake` record in `tooling/mempool-workshop/.workshop-state.json` / FINDINGS |
+| Canonical raw rejection | `docs/FINDINGS.md` raw entry L104: literal `MAX_VERIFY_GAS` object |
+| Deadline | Sat Nov 7 09:00 IST |
 
 The verifier URL above is intentionally marked unavailable if the explorer does not resolve it; use the raw transaction hash in `docs/FINDINGS.md` as the audit source.
 

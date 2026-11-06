@@ -217,6 +217,14 @@ pre i { font-style: normal; }
 .unaudited-badge { letter-spacing: 0.1em; border-radius: 0; }
 
 /* ---------- final polish ---------- */
+.limitation-strip { position: static; margin-top: 40px; flex-wrap: wrap; gap: 8px 22px; padding: 14px 20px; }
+.content-grid { padding-bottom: 40px; }
+@media (max-width: 900px) {
+  .account-meta { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .account-header { row-gap: 10px; padding-top: 12px; padding-bottom: 12px; }
+  .screen { padding: 22px 18px; }
+  .screen-heading { flex-direction: column; gap: 18px; }
+}
 .screen { border-radius: 4px; }
 .screen h2 { text-wrap: balance; }
 .home-card, .lane-card, .compose-panel, .arkiv-live, .identity-card {

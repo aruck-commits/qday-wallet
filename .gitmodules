@@ -1,0 +1,6 @@
+[submodule "contracts/lib/mldsa-solidity"]
+	path = contracts/lib/mldsa-solidity
+	url = https://github.com/skalenetwork/mldsa-solidity
+[submodule "contracts/lib/hegota-support"]
+	path = contracts/lib/hegota-support
+	url = https://github.com/forshtat/hegota-support

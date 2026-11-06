@@ -1,0 +1,8 @@
+{
+  "lib\\hegota-support": {
+    "rev": "2377188af5684fcb199437efed39e7a096c2a744"
+  },
+  "lib\\mldsa-solidity": {
+    "rev": "088fee22dcacfc788fbf79bcc1b62daf4f26a5cf"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "fetchedAt": "2026-11-06T16:37:46.422Z",
+  "network": {
+    "name": "Arkiv Rabdi testnet",
+    "chainId": 7794095,
+    "rpc": "https://rpc.rabdi.db-chain.testnet.arkiv.network"
+  },
+  "writer": "0xD73977DdE03abAB3984cFb1e0A2d7629a693A4a1",
+  "schema": "qday.migration",
+  "query": "scheme = \"ML-DSA-44\"",
+  "resultCount": 1,
+  "entity": {
+    "key": "0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048",
+    "scheme": "ML-DSA-44",
+    "pqKeyVersion": "1",
+    "status": "rotated",
+    "swarmRef": "81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74",
+    "wallet": null,
+    "ensName": null,
+    "patchTx": "0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5",
+    "explorerUrl": "https://rabdi.explorer.arkiv.network/tx/0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5"
+  }
+}

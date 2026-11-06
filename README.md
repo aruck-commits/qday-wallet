@@ -21,6 +21,14 @@ The staked G1 admission, mined G3 PQ frame, and ENS PQ write/rotation remain una
 
 PQ write on the default resolver requires `ROLE_SET_TEXT`; registration grants resolver and subregistry roles only. The captured `eth_call` proof is in `docs/FINDINGS.md` under the final ENS diagnosis. The ENS pick therefore stands on the name owned by the PQ wallet, `executePq` infrastructure, regression asserts, and this honest limitation.
 
+## Arkiv registry
+
+- Writer wallet (relayer that created and patched the entity): `0xD73977DdE03abAB3984cFb1e0A2d7629a693A4a1`
+- Entity: `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048`, schema `qday.migration`, chain 7794095
+- Query we run (SDK, `yarn arkiv:read`): `scheme = "ML-DSA-44"` returns 1 entity
+- The Registry screen shows the build-time result from `app/src/data/arkivLive.json`
+- Fields and expiry: `arkiv/schema.md` · Feedback: `arkiv/friction.md` · Swarm: `arkiv/swarm.md`
+
 ## Honest limitations
 
 The ML-DSA verifier is third-party and unaudited. The prototype retains residual key, authorization, and integration risk. Private keys never leave the active session in the demo path. See `docs/VULNERABILITIES.md`.

@@ -11,6 +11,7 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 ## decisions
 
 - 2026-11-06 · G1 sidecar finalization SKIPPED-RISK · Decision: after two zero-peer preflight failures, do not submit the staked frame or retry an admitted/known payload. Reason: the runbook and AGENTS.md require an empty gateway→miner P2P link to be a hard stop; canonical raw evidence remains valid and exact.
+- 2026-11-06 · G3 SKIPPED-RISK · Decision: do not run the fresh-chain PQ deployment, key precompute, or frame while the same mandatory sidecar peer gate has failed twice. Reason: these writes cannot satisfy the EF admission criterion without the gateway→miner link.
 
 ## G4 evidence
 

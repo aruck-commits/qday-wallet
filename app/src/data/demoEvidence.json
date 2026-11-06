@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T17:13:49.677Z",
+  "generatedAt": "2026-11-06T17:16:19.266Z",
   "exportMode": "live-read-only",
   "account": {
     "address": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
@@ -18,7 +18,7 @@
     "devnet": {
       "chainId": 1337,
       "participant": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
-      "lastBlock": 6449,
+      "lastBlock": 6474,
       "balanceWei": "549660836018000000",
       "balanceEth": "0.549661",
       "stakeSubject": "0xf2bae312209239cb623c23d2f131269fc5f46006",
@@ -30,7 +30,7 @@
     },
     "sepolia": {
       "chainId": 11155111,
-      "latestBlock": 12077964,
+      "latestBlock": 12077976,
       "error": null
     }
   },
@@ -103,10 +103,10 @@
       "verdict": "WRITTEN",
       "resolver": "0x863b62fA8988Ba340C24F389FFDF568b3ccbc8e4",
       "textKey": "pq-key",
-      "value": "sha256:0df74bba1ed130f54299f6cf7f703b54dd170ea29429665774cf9cb29b78d440",
-      "readBack": "sha256:0df74bba1ed130f54299f6cf7f703b54dd170ea29429665774cf9cb29b78d440",
-      "txHash": "0x67533e9254cda1c0e8f543d5e158076ef9b8d08a215c358460c26c15c59178bd",
-      "explorerUrl": "https://sepolia.etherscan.io/tx/0x67533e9254cda1c0e8f543d5e158076ef9b8d08a215c358460c26c15c59178bd",
+      "value": "sha256:86c769d3b468de487eb9a09f242f7fa0b997a07ef4ded49627e7bf9539f28b62",
+      "readBack": "sha256:86c769d3b468de487eb9a09f242f7fa0b997a07ef4ded49627e7bf9539f28b62",
+      "txHash": "0x8dfeccaf85f35ea2eee9a4cbddd75b29f789097021bd28797e8efa74dbab3b4b",
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0x8dfeccaf85f35ea2eee9a4cbddd75b29f789097021bd28797e8efa74dbab3b4b",
       "setResolverTx": "0xc1c1a9cacca31c3beae15a914c0e9a3deb86aeca203f75bd2014eb6d78b11488",
       "setResolverUrl": "https://sepolia.etherscan.io/tx/0xc1c1a9cacca31c3beae15a914c0e9a3deb86aeca203f75bd2014eb6d78b11488",
       "reason": "executePq setText on our own Permissioned Resolver, owned by the relayer and granted to the wallet for pq-key only; read back through UniversalResolverV2."
@@ -117,7 +117,7 @@
       "explorerUrl": "https://sepolia.etherscan.io/tx/0x14716ba1b4bd02b2b1851211d7d2f9fc499cf10123a834deb048520d9057dafb",
       "pqKeyVersion": "1",
       "ownerUnchanged": true,
-      "reason": "Name owner unchanged and record still resolves. The pq-key text record still holds the pre-rotation key hash; writing the new key hash is a follow-up."
+      "reason": "Rotation confirmed on-chain. pq-key text record updated after rotation: value is sha256 of the new ML-DSA-44 public key. The earlier record value was sha256 of the pre-rotation secret."
     }
   },
   "arkiv": {

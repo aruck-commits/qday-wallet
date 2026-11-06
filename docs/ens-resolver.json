@@ -2,18 +2,19 @@
   "name": "qdaywallet.eth",
   "resolver": "0x863b62fA8988Ba340C24F389FFDF568b3ccbc8e4",
   "textKey": "pq-key",
-  "value": "sha256:0df74bba1ed130f54299f6cf7f703b54dd170ea29429665774cf9cb29b78d440",
-  "readBack": "sha256:0df74bba1ed130f54299f6cf7f703b54dd170ea29429665774cf9cb29b78d440",
+  "value": "sha256:86c769d3b468de487eb9a09f242f7fa0b997a07ef4ded49627e7bf9539f28b62",
+  "readBack": "sha256:86c769d3b468de487eb9a09f242f7fa0b997a07ef4ded49627e7bf9539f28b62",
   "steps": {
     "deployProxy": "0x39400773627347d8cb54b8cc6c17595e2565ef55dd3372a67d1223b1f9713ac4",
     "setResolver": "0xc1c1a9cacca31c3beae15a914c0e9a3deb86aeca203f75bd2014eb6d78b11488",
     "grantSetterRoles": "0x0d0b2de8be92871d5e91d64e4292352fe22f3f45c38ab961da743957ca6a041d",
     "setText": "0x67533e9254cda1c0e8f543d5e158076ef9b8d08a215c358460c26c15c59178bd",
-    "rotatePqKey": "0x14716ba1b4bd02b2b1851211d7d2f9fc499cf10123a834deb048520d9057dafb"
+    "rotatePqKey": "0x14716ba1b4bd02b2b1851211d7d2f9fc499cf10123a834deb048520d9057dafb",
+    "setTextAfterRotation": "0x8dfeccaf85f35ea2eee9a4cbddd75b29f789097021bd28797e8efa74dbab3b4b"
   },
   "rotation": {
     "pqKeyVersionAfter": "1",
     "ownerUnchanged": true,
-    "note": "Name owner unchanged and record still resolves. The pq-key text record still holds the pre-rotation key hash; writing the new key hash is a follow-up."
+    "note": "Rotation confirmed on-chain. pq-key text record updated after rotation: value is sha256 of the new ML-DSA-44 public key. The earlier record value was sha256 of the pre-rotation secret."
   }
 }

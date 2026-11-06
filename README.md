@@ -27,6 +27,19 @@ The staked G1 admission and mined G3 PQ frame remain unavailable: the shared dev
 - Transactions and readback are in `docs/ens-resolver.json`. Scripts: `yarn ens:resolver`, `scripts/ens_rotate.ts`, `scripts/ens_record_rotate.ts`.
 
 Earlier notes said the write was unreachable. That was true only for the default shared resolver. The ENS docs describe per-account resolvers, which the name owner can deploy and administer.
+## EF Alt-Mempool: design and status
+
+**Why the alternative mempool.** The ML-DSA-44 check costs about 2.66M gas to verify (measured). The canonical mempool caps verification at about 100k, so a PQ-authorized frame transaction is rejected there with `MAX_VERIFY_GAS`. The captured rejection is in `docs/FINDINGS.md`.
+
+**What the code does.** `contracts/src/QDayWallet.sol` authorizes a spend by verifying an ML-DSA-44 signature over a 32-byte intent in a VERIFY frame. Keys are precomputed through `MLDSAKeyFactory` (registerA, registerT), so verification takes the fast path. Admission is submitted through `eth_sendFrameTransaction` on the sidecar gateway. The stake of 0.012 ETH is recorded in the NaiveStakingRegistry and read back with `getDepositInfo`.
+
+**Trade-offs.** The verifier is third-party and unaudited. Gas is high even on the fast path. The admission path depends on a sidecar with staked-entity rules, so a wallet has to stake before its frames are accepted.
+
+**Status (honest).**
+- Captured: canonical rejection (`MAX_VERIFY_GAS`), unstaked sidecar rejection (`Out Of Gas`), contract deployments, and the stake readback (0.012 ETH).
+- Not captured: an admitted, mined PQ frame transaction. The shared devnet's gateway has had no connected miner peers during our runs, so no frame was mined. The stake transaction we first recorded was accepted into the mempool but never mined; the readback is the evidence that the stake exists.
+- To finish this exhibit we need the devnet operator to restore the gateway-to-miner link (or a fresh devnet), then run `docs/REDEPLOY_RUNBOOK.md`.
+
 ## Honest limitations
 
 The ML-DSA verifier is third-party and unaudited. The prototype retains residual key, authorization, and integration risk. Private keys never leave the active session in the demo path. See `docs/VULNERABILITIES.md`.

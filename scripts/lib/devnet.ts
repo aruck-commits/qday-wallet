@@ -63,7 +63,7 @@ export async function pollFrameStatus(hash: `0x${string}`) {
     const status = await gateway.request({ method: "skandha_frameTransactionStatus" as never, params: [hash] as never });
     statuses.push(status);
     const text = JSON.stringify(status);
-    if (/Cancelled|Expired/.test(text)) break;
+    if (/Cancelled|Expired|OnChain/.test(text)) break;
     await new Promise((resolve) => setTimeout(resolve, 5_000));
   }
   return statuses;

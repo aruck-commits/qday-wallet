@@ -2,6 +2,30 @@
 
 Q-Day Wallet is a quantum-safe smart-wallet prototype using NIST ML-DSA-44 (FIPS 204), EIP-8141 frame admission, ENSv2 identity continuity, and Arkiv migration records.
 
+**Live demo:** https://aruck-commits.github.io/qday-wallet/
+
+## What works, at a glance
+
+| Area | Status | Evidence |
+|---|---|---|
+| ML-DSA-44 wallet contract (verify, precompute, execute) | Deployed on devnet 1337, 6/6 Foundry tests pass | `docs/FINDINGS.md`, `forge test --root contracts` |
+| Default-mempool rejection of PQ verification | Captured | `MAX_VERIFY_GAS` response below |
+| Stake on the alternative mempool | Mined, 0.024 ETH staked | `docs/evidence/` snapshots, findings |
+| Admitted PQ frame transaction on the alternative mempool | **Not achieved**: sidecar rejects with `Out Of Gas` at both 3.2M and 6.5M limits | `docs/FINDINGS.md` |
+| ENSv2 identity on Sepolia (own resolver, PQ text write, key rotation) | Done and read back through the Universal Resolver | `docs/ens-resolver.json` |
+| Arkiv migration entity (SDK write, query) | Done | `yarn arkiv:read`, `arkiv/` |
+| Swarm bonus | Not claimed (no postage batch) | `arkiv/swarm.md` |
+
+## Quick start
+
+```sh
+cd app && bun install && bun run build   # production build (uses committed evidence)
+bun run typecheck                         # from repo root: tsc --noEmit -p app
+forge test --root contracts              # 6 contract tests
+```
+
+The demo reads committed evidence. Re-generating evidence needs local keys in `.env.*.local` (git-ignored).
+
 ## Evidence table
 
 | Exhibit | Observed evidence |

@@ -374,3 +374,17 @@ body { background: var(--bg); }
 
 /* ---------- lane header: remove duplicated lane letter ---------- */
 .lane-index { display: none; }
+
+/* ---------- submission polish ---------- */
+.screen { padding: clamp(26px, 4vw, 52px); }
+.screen-heading { margin-bottom: 40px; }
+.eyebrow { font-size: 10px; letter-spacing: .14em; }
+.eyebrow::before { content: ""; }
+.screen h2 { font-size: clamp(30px, 3.4vw, 44px); font-weight: 500; }
+.tab-rail { gap: 2px; }
+.tab-rail button { padding: 12px 14px; color: var(--muted); border-bottom-width: 2px; }
+.tab-rail button:hover { color: var(--text); }
+.section-kicker { font-size: 10px; letter-spacing: .14em; color: var(--muted); }
+.home-card, .lane-card, .hero-stat, .arkiv-live, .compose-panel { box-shadow: 0 1px 0 rgba(255,255,255,.015) inset; }
+.limitation-strip { justify-content: space-between; max-width: 1300px; margin: 0 auto; }
+.button-primary:focus-visible, .button-quiet:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }

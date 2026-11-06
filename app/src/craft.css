@@ -216,6 +216,90 @@ pre i { font-style: normal; }
 .architecture-node > div { border-color: rgba(34, 211, 238, 0.45); background: rgba(34, 211, 238, 0.04); }
 .unaudited-badge { letter-spacing: 0.1em; border-radius: 0; }
 
+/* ---------- theme: graphite + one accent (final) ---------- */
+:root {
+  --bg: #0b0d11;
+  --panel: #12151b;
+  --panel2: #0f1217;
+  --line: #22262f;
+  --line-strong: #323846;
+  --text: #e8ebf1;
+  --muted: #8b93a3;
+  --green: #7fdcb4;
+  --cyan: #7fdcb4;
+  --violet: #9aa8ff;
+  --amber: #e7b45c;
+  --red: #ef7b84;
+}
+body { background: var(--bg); }
+.screen {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 0 rgba(255,255,255,.02) inset;
+}
+.account-header, .topbar {
+  background: rgba(11, 13, 17, .92);
+  border-bottom: 1px solid var(--line);
+  box-shadow: none;
+}
+.brand-mark { color: var(--green); }
+.chain-switcher { background: var(--panel2); border-color: var(--line); }
+.chain-switcher .chain-active { background: #1b2a24; color: var(--green); }
+.account-chip { border-color: var(--line-strong); color: var(--text); }
+.account-chip b { color: var(--violet); }
+.block-ticker i { background: var(--green); box-shadow: none; }
+.balance-chip { border-color: var(--line-strong); background: var(--panel2); color: var(--text); }
+.tab-rail button { color: var(--muted); }
+.tab-rail .tab-active { color: var(--text); border-color: var(--green); }
+.eyebrow, .section-kicker { color: var(--muted); }
+.eyebrow::before { color: var(--violet); content: "\25CF  "; font-size: 8px; vertical-align: middle; }
+.screen h2 { color: var(--text); letter-spacing: -.035em; }
+.screen-lede { color: var(--muted); }
+.button-primary { background: var(--green); border-color: var(--green); color: #0a1a14; border-radius: 6px; box-shadow: none; font-weight: 600; }
+.button-primary:hover { background: #9be9c8; }
+.button-quiet { border-radius: 6px; border-color: var(--line-strong); color: var(--muted); }
+.button-quiet:hover { color: var(--text); border-color: var(--muted); }
+.identity-card { border: 1px solid var(--line-strong); background: var(--panel2); border-radius: 8px; }
+.identity-card strong { color: var(--text); }
+.live-stamp, .owner-chip, .resolution-card { border-radius: 4px; }
+.home-card { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; }
+.home-card strong { color: var(--text); }
+.stake-card strong { color: var(--green); }
+.key-card strong { color: var(--violet); }
+.home-card .card-foot, .home-card p { color: var(--muted); }
+.history-row, .queue-row { border-bottom-color: var(--line); }
+.status-mined, .status-verified { color: var(--green); border-color: rgba(127,220,180,.45); }
+.status-pending, .status-recorded { color: var(--amber); border-color: rgba(231,180,92,.45); }
+.compose-panel { border: 1px solid var(--line-strong); background: var(--panel2); border-radius: 8px; }
+.compose-badge { color: var(--violet); border-color: rgba(154,168,255,.45); border-radius: 4px; }
+.compose-fields span { background: var(--panel); border-color: var(--line); border-radius: 4px; color: var(--text); }
+.lane-card { background: var(--panel2); border-radius: 8px; border-color: var(--line); }
+.lane-red.lane-active { border-color: var(--red); }
+.lane-amber.lane-active { border-color: var(--amber); }
+.lane-green.lane-active { border-color: var(--green); }
+.stamp-red { color: var(--red); }
+.stamp-amber { color: var(--amber); }
+.stamp-green { color: var(--green); }
+.stamp-violet, .stamp-cyan { color: var(--violet); }
+.gas-measured { background: linear-gradient(90deg, #5b6bd6, var(--violet)); }
+.gas-values strong { color: var(--text); }
+.gas-track { background: var(--panel2); border-color: var(--line-strong); }
+.key-device { background: var(--panel2); border-color: var(--line-strong); border-radius: 8px; box-shadow: none; }
+.byte-grid .byte-lit { background: var(--violet); box-shadow: none; }
+.exposure-card { background: var(--panel2); border-radius: 8px; }
+.registry-table, .history-panel { border-color: var(--line); }
+.table-row button:hover { border-color: var(--green); color: var(--green); }
+.arkiv-live { background: var(--panel2); border-color: var(--line-strong); border-radius: 8px; }
+.arkiv-live strong { color: var(--green); }
+.raw-window { background: #090b0f; border-color: var(--line); border-radius: 6px; }
+.limitation-strip { background: #090b0f; border-top-color: var(--line); color: var(--muted); }
+.architecture-node > div { background: var(--panel2); border-color: var(--line-strong); border-radius: 6px; }
+.architecture-node > div:hover { border-color: var(--violet); }
+.quantum-field { display: none; }
+.hero-screen blockquote { border-left-color: var(--violet); color: #c9cffb; }
+.hero-proof strong { color: var(--amber); }
+.screen::before, .screen::after { content: none; }
+
 /* ---------- final polish ---------- */
 .limitation-strip { position: static; margin-top: 40px; flex-wrap: wrap; gap: 8px 22px; padding: 14px 20px; }
 .content-grid { padding-bottom: 40px; }

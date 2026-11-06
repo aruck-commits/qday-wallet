@@ -10,8 +10,7 @@ contract SpikeWallet is HegotaSupport(Devnet.ERC8421_WORKSHOP) {
         if (msg.data.length != 0) {
             require(sigparam(0, SigParam.SCHEME) == 0, "arbitrary only");
             require(sigdatacopy(0, sigparam(0, SigParam.SIGNATURE_LENGTH), 0).length == 2420, "payload length");
-            uint256 stop = gasleft() > 2_730_000 ? gasleft() - 2_650_000 : 80_000;
-            while (gasleft() > stop + 80_000) assembly ("memory-safe") { pop(keccak256(0, 0)) }
+            for (uint256 i = 0; i < 60_000; ++i) assembly ("memory-safe") { pop(keccak256(0, 0)) }
         }
         approve(Scope.EXECUTION_AND_PAYMENT);
     }

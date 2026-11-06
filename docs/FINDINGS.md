@@ -8,6 +8,8 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## G1 (pending tonight)
 
+- 2026-11-06 · operator error · an accidental `demo:spike --help` invocation submitted a second identical spike deployment at nonce `7`, hash `0x219ea9207770c465f3e3f2f3c9bc7aecec0de165d8ca1c9fccf2d1477be0f8b0`; the intended deployment remains nonce `6`, hash `0x92e1384824f64eb1c731268bffd2e1eb31c56e9a1e53b0ce90888ce5209cc5a8`. Both remain pending on the stalled chain and will not be resubmitted.
+
 - [ ] canonical rejection rule name for >100k VERIFY frame (ARBITRARY entry)
 - [ ] sidecar unstaked rejection rule
 - [ ] ARBITRARY entry layout: sigparam indices + sigdatacopy offsets (fixture)

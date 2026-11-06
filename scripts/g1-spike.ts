@@ -24,6 +24,7 @@ const artifactPath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../contracts/out/SpikeWallet.sol/SpikeWallet.json",
 );
+const runStatePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../tooling/mempool-workshop/.g1-spike-state.json");
 const chain = defineChain({
   id: 1337,
   name: "EIP-8141 Workshop Devnet",
@@ -71,6 +72,7 @@ async function attempt(send: () => Promise<Hex>): Promise<{ accepted: true; hash
 }
 
 async function main() {
+  if (process.argv.length !== 2) throw new Error("demo:spike accepts no arguments");
   const privateKey = readParticipantKey();
   const account = privateKeyToAccount(privateKey);
   const publicClient = createPublicClient({ chain, transport: http(gatewayUrl) });
@@ -84,6 +86,7 @@ async function main() {
     gas: 6_000_000n,
     gasPrice: 2_000_000n,
   });
+  fs.writeFileSync(runStatePath, JSON.stringify({ deployHash }) + "\n");
   const deployReceipt = await publicClient.waitForTransactionReceipt({ hash: deployHash, timeout: 120_000, pollingInterval: 2_000 });
   if (deployReceipt.status !== "success" || !deployReceipt.contractAddress) throw new Error(`Spike deployment failed: ${deployHash}`);
   const wallet = deployReceipt.contractAddress;

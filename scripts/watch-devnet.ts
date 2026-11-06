@@ -15,14 +15,21 @@ function compact(value: unknown) {
   return String(value);
 }
 
+function txpoolCount(value: unknown) {
+  if (!value || typeof value !== "object") return compact(value);
+  const status = value as { pending?: string; queued?: string };
+  return String(BigInt(status.pending ?? "0x0") + BigInt(status.queued ?? "0x0"));
+}
+
 async function poll() {
   const time = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(new Date());
-  const [block, chainId, txpool, peers, mempool] = await Promise.allSettled([
-    rpc(ethrexUrl, "eth_blockNumber"), rpc(ethrexUrl, "eth_chainId"), rpc(ethrexUrl, "txpool_status"), rpc(gatewayUrl, "skandha_explorer_peers"), rpc(gatewayUrl, "debug_bundler_dumpMempool"),
+  const [block, chainId, txpool, peers] = await Promise.allSettled([
+    rpc(ethrexUrl, "eth_blockNumber"), rpc(ethrexUrl, "eth_chainId"), rpc(ethrexUrl, "txpool_status"), rpc(gatewayUrl, "skandha_explorer_peers"),
   ]);
   const value = (result: PromiseSettledResult<unknown>) => result.status === "fulfilled" ? compact(result.value) : `ERR:${result.reason.message}`;
   const blockHex = block.status === "fulfilled" ? String(block.value) : "ERR";
-  console.log(`${time} IST block=${blockHex} chain=${value(chainId)} txpool=${value(txpool)} peers=${value(peers)} mempool=${value(mempool)}`);
+  const pool = txpool.status === "fulfilled" ? txpoolCount(txpool.value) : `ERR:${txpool.reason.message}`;
+  console.log(`${time} IST block=${blockHex} chain=${value(chainId)} txpool=${pool} peers=${value(peers)}`);
   if (block.status === "fulfilled" && Number(BigInt(String(block.value))) > resumeBlock) {
     console.log(`RESUMED at ${time} IST`);
     process.exit(0);

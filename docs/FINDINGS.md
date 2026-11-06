@@ -8,6 +8,10 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 
 ## G1 (pending tonight)
 
+## G4 evidence
+
+- 2026-11-06 · Sepolia ENSv2 PASS · `qdaywallet.eth` registered to QDayWallet `0xe104a972a2d18a09744b66fb5886f5271a5cc9b0`; replacement-owner commitment tx `0x0932d356e521d4bb0eb25022346d0f909b00a1f197b78c91721714568828653b`, register tx `0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1`. Optional `qday.eth` quote `160000009` MockUSDC exceeded observed balance `91999979`; no premium registration submitted.
+
 ## G5 evidence
 
 - 2026-11-06 · Rabdi SDK 1.0.1 PASS · created `qday.migration` entity `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048` in tx `0x36def5cf23e075599abefeb0d9c012b67d18aee977976357cc5533691aa0c2fc`; public get asserted; patch tx `0xc62614cd4dbfc523841af3e8924f25e2a6df669c4c7699596f6c07301792d9a4`; filtered query count `1`.
@@ -83,3 +87,5 @@ Format: gate · UTC time · what we tried · verbatim result · action taken.
 - {"gate":"G1","error":{"error":"Error: self-stake was rejected; no retry performed","chain":[{"message":"self-stake was rejected; no retry performed"}]}}
 
 - {"gate":"G4","entry":{"stage":"sepolia_stack_deployed","result":{"factory":"0xDE3211df9A74dD8eac66b411C6Bb6Eb7A1d08FBa","verifier":"0xfD785c07bc45B4648a52c9E315B318be17D30169","wallet":"0xe104a972a2d18a09744b66fb5886f5271a5cc9b0","txHashes":{"factory":"0x13e17a2d0a8670a3b248b5416c2510a43ad709c7b22f451d8bf9a7a53da45fca","verifier":"0x9e8b2462bfea1331a3ba0e83402686d604ca51005a4a847dd14174c127319171","wallet":"0x2f3101a67e53a87cf4dcd7875c7e6fffb0deb8f132d12f94a807c94c1d928cd9"},"relayer":"0x56cE1a74716E3b06E12B317279a4E027eb0d9169"}}}
+
+- {"gate":"G4","entry":{"stage":"ens_registered","result":{"wallet":"0xe104a972a2d18a09744b66fb5886f5271a5cc9b0","label":"qdaywallet.eth","registrar":"0xf633e7fc17e2bbe0d0965d18ec1821dcb754a3d3","mockUsdc":"0x240b0316df57887dbbe58b586508b19e633a14aa","price":"8000021","txHashes":{"commit":"0x0932d356e521d4bb0eb25022346d0f909b00a1f197b78c91721714568828653b","register":"0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1"},"optional":{"label":"qday.eth","available":true,"price":"160000009","balance":"100000000","attempted":false,"reason":"not covered by remaining MockUSDC"}}}}

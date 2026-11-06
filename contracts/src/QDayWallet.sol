@@ -3,6 +3,7 @@ pragma solidity 0.8.28;
 
 import {HegotaSupport, Devnet, Scope} from "@forshtat/hegota-support/contracts/HegotaSupport.sol";
 import {IMLDSAVerifier, ParamSet, ML_DSA_44} from "mldsa-solidity/IMLDSAVerifier.sol";
+import {IERC1155Receiver} from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 
 contract QDayWallet is HegotaSupport(Devnet.ERC8421_WORKSHOP) {
     address public immutable owner;
@@ -24,6 +25,22 @@ contract QDayWallet is HegotaSupport(Devnet.ERC8421_WORKSHOP) {
     fallback() external payable {
         if (msg.data.length != 0) revert("G1_LAYOUT_PENDING");
         approve(Scope.EXECUTION_AND_PAYMENT);
+    }
+
+    function onERC1155Received(address, address, uint256, uint256, bytes calldata)
+        external
+        pure
+        returns (bytes4)
+    {
+        return IERC1155Receiver.onERC1155Received.selector;
+    }
+
+    function onERC1155BatchReceived(address, address, uint256[] calldata, uint256[] calldata, bytes calldata)
+        external
+        pure
+        returns (bytes4)
+    {
+        return IERC1155Receiver.onERC1155BatchReceived.selector;
     }
 
     function currentIntent(address target, bytes calldata callData, uint256 deadline) public view returns (bytes32) {

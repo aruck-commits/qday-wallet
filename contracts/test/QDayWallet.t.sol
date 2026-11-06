@@ -39,4 +39,11 @@ contract QDayWalletTest is Test {
         vm.expectRevert("expired");
         wallet.executePq(intent, hex"01", address(target), data, deadline);
     }
+    function testAcceptsErc1155HooksAndRejectsUnknownSelector() public {
+        assertEq(wallet.onERC1155Received(address(this), address(0), 1, 1, ""), bytes4(0xf23a6e61));
+        uint256[] memory ids = new uint256[](1); uint256[] memory values = new uint256[](1);
+        assertEq(wallet.onERC1155BatchReceived(address(this), address(0), ids, values, ""), bytes4(0xbc197c81));
+        (bool ok, bytes memory returned) = address(wallet).call(hex"deadbeef");
+        assertFalse(ok); assertEq(string(returned[4:]), "G1_LAYOUT_PENDING");
+    }
 }

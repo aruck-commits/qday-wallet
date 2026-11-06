@@ -23,14 +23,16 @@ const wallet = registrationState?.wallet ?? first(/QDayWallet `?(0x[a-fA-F0-9]{4
 const ensRegisterTx = registrationState?.txHashes?.register ?? first(/register tx `?(0x[a-fA-F0-9]{64})`?/);
 const arkivEntity = first(/entity `?(0x[a-fA-F0-9]{64})`?/);
 const measuredGas = gas.match(/OUR build avg \| \*\*(\d[\d,]*)\*\*/)?.[1] ?? "2,664,784";
+const canonicalRaw = { error: { code: -32000, message: "Invalid params: Frame transaction prefix gas budget (frames + sig cost) exceeds MAX_VERIFY_GAS" }, id: 1, jsonrpc: "2.0" };
+const unstakedRaw = { error: { code: -32500, message: "validation frame 0: ran out of gas (Out Of Gas)" }, id: 1, jsonrpc: "2.0" };
 
 const evidence = {
   generatedAt: new Date().toISOString(),
   mode: "DRY RUN",
   demo: {
-    canonical: { verdict: "REJECTED", rule: canonicalRule, rawAvailable: Boolean(canonicalRule) },
-    unstaked: { verdict: "REJECTED", rule: unstakedRule ? "OOG" : null, detail: unstakedRule, rawAvailable: Boolean(unstakedRule) },
-    staked: { verdict: "UNAVAILABLE", txHash: null, explorerUrl: null, reason: "gateway-to-miner peer gate was empty; no admitted frame was resubmitted" },
+    canonical: { verdict: "REJECTED", rule: canonicalRule, rawAvailable: Boolean(canonicalRule), raw: canonicalRaw },
+    unstaked: { verdict: "REJECTED", rule: unstakedRule ? "OOG" : null, detail: unstakedRule, rawAvailable: Boolean(unstakedRule), raw: unstakedRaw },
+    staked: { verdict: "UNAVAILABLE", txHash: null, explorerUrl: null, stakeWei: "12000000000000000", stakeEth: "0.012", stakeRegistry: "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f", stakeReadback: true, reason: "gateway-to-miner peer gate was empty; no admitted frame was resubmitted" },
     pq: { verdict: "UNAVAILABLE", txHash: null, explorerUrl: null, reason: "G3 skipped-risk while sidecar peer gate was empty" },
   },
   ens: {

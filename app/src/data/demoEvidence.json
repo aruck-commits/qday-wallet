@@ -1,22 +1,42 @@
 {
-  "generatedAt": "2026-11-06T12:18:15.562Z",
+  "generatedAt": "2026-11-06T12:50:29.436Z",
   "mode": "DRY RUN",
   "demo": {
     "canonical": {
       "verdict": "REJECTED",
       "rule": "MAX_VERIFY_GAS",
-      "rawAvailable": true
+      "rawAvailable": true,
+      "raw": {
+        "error": {
+          "code": -32000,
+          "message": "Invalid params: Frame transaction prefix gas budget (frames + sig cost) exceeds MAX_VERIFY_GAS"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      }
     },
     "unstaked": {
       "verdict": "REJECTED",
       "rule": "OOG",
       "detail": "ran out of gas (Out Of Gas)",
-      "rawAvailable": true
+      "rawAvailable": true,
+      "raw": {
+        "error": {
+          "code": -32500,
+          "message": "validation frame 0: ran out of gas (Out Of Gas)"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      }
     },
     "staked": {
       "verdict": "UNAVAILABLE",
       "txHash": null,
       "explorerUrl": null,
+      "stakeWei": "12000000000000000",
+      "stakeEth": "0.012",
+      "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+      "stakeReadback": true,
       "reason": "gateway-to-miner peer gate was empty; no admitted frame was resubmitted"
     },
     "pq": {

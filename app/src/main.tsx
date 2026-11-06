@@ -13,6 +13,7 @@ import { S3Registry } from "./screens/S3Registry";
 import { S4Identity } from "./screens/S4Identity";
 import { S5Architecture } from "./screens/S5Architecture";
 import "./style.css";
+import "./screen-overrides.css";
 
 const evidence = evidenceJson as DemoEvidence;
 const nav: { id: Screen; label: string }[] = [{ id: "hero", label: "S0 / HERO" }, { id: "console", label: "S1 / DEMO" }, { id: "key", label: "S2 / KEY" }, { id: "registry", label: "S3 / REGISTRY" }, { id: "identity", label: "S4 / IDENTITY" }, { id: "architecture", label: "S5 / ARCH" }];

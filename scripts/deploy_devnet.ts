@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createPublicClient, createWalletClient, defineChain, http, keccak256, type Abi, type Address, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { appendFinding, ethrexUrl } from "./lib/devnet.js";
+import { appendFinding, ethrexUrl, devnetChainId } from "./lib/devnet.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const statePath = path.join(root, "tooling/mempool-workshop/.qday-deploy-state.json");
@@ -19,7 +19,7 @@ const observedTxHashes: Record<string, Hex> = {
   registerT: "0x24ce10d1dfda5e2d6bb251020730fc42581a016bb1c3ef424140aa7872055060",
   QDayWallet: "0xb83ab344ad0ebacf39721ac0d236a9e76d798e95f66f18d5ff0e41fc424b56cf",
 };
-const chain = defineChain({ id: 1337, name: "EIP-8141 Workshop Devnet", nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, rpcUrls: { default: { http: [ethrexUrl] } } });
+const chain = defineChain({ id: devnetChainId, name: "EIP-8141 Workshop Devnet", nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, rpcUrls: { default: { http: [ethrexUrl] } } });
 type Artifact = { abi: Abi; bytecode: { object: Hex } };
 type State = { factory?: Address; verifier?: Address; wallet?: Address; participant?: Address; txHashes?: Record<string, Hex>; registry?: { a?: Address; t?: Address }; liveness?: { before: string; after: string } };
 const json = (value: unknown) => JSON.stringify(value, (_, v) => typeof v === "bigint" ? v.toString() : v);
@@ -76,6 +76,6 @@ async function main() {
   if (state.registry.a === "0x0000000000000000000000000000000000000000" || state.registry.t === "0x0000000000000000000000000000000000000000") throw new Error("precompute registry readback was empty");
   writeState(state);
   appendFinding({ gate: "G3", stage: "deploy_and_precompute", result: state });
-  console.log(json({ ok: true, chainId: 1337, ...state }));
+  console.log(json({ ok: true, chainId: devnetChainId, ...state }));
 }
 main().catch((error) => { const result = { ok: false, error: error instanceof Error ? error.message : String(error) }; appendFinding({ gate: "G3", stage: "deploy_and_precompute_error", result }); console.log(json(result)); process.exitCode = 1; });

@@ -3,12 +3,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createPublicClient, defineChain, encodeFunctionData, http, type Address, type Hex } from "viem";
 
-export const ethrexUrl = "https://altmempool.forshtat.com";
-export const gatewayUrl = "https://altmempoolgateway.forshtat.com/rpc";
+// Override every endpoint with env vars when the devnet moves (e.g. DEVNET_RPC=... DEVNET_GATEWAY=... DEVNET_CHAIN_ID=...).
+export const ethrexUrl = process.env.DEVNET_RPC ?? "https://altmempool.forshtat.com";
+export const gatewayUrl = process.env.DEVNET_GATEWAY ?? "https://altmempoolgateway.forshtat.com/rpc";
+export const devnetChainId = Number(process.env.DEVNET_CHAIN_ID ?? 1337);
 export const stakingRegistry = "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f" as Address;
 export const minimumBalance = 200_000_000_000_000_000n;
 export const minimumStake = 10_000_000_000_000_000n;
-const chain = defineChain({ id: 1337, name: "EIP-8141 Workshop Devnet", nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, rpcUrls: { default: { http: [ethrexUrl] } } });
+const chain = defineChain({ id: devnetChainId, name: "EIP-8141 Workshop Devnet", nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, rpcUrls: { default: { http: [ethrexUrl] } } });
 export const ethrex = createPublicClient({ chain, transport: http(ethrexUrl) });
 export const gateway = createPublicClient({ chain, transport: http(gatewayUrl) });
 

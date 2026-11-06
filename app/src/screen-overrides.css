@@ -1,0 +1,1 @@
+.status-pipeline{display:flex;gap:0;border:1px solid var(--line);margin:-14px 0 20px;padding:10px;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted)}.status-pipeline span{flex:1;padding:4px 10px;border-right:1px solid var(--line)}.status-pipeline span:last-child{border:0}.status-pipeline .pipeline-done{color:var(--cyan)}

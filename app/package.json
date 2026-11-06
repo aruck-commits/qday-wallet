@@ -24,7 +24,6 @@
     "@tailwindcss/vite": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "fdir": "latest",
     "tailwindcss": "latest",
     "typescript": "^7.0.2",
     "vite": "latest"

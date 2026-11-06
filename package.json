@@ -11,6 +11,7 @@
     "arkiv:sync": "tsx scripts/arkiv_sync.ts",
     "deploy:sepolia": "tsx scripts/deploy_sepolia.ts",
     "ens:register": "tsx scripts/ens_register.ts",
+    "swarm:passport": "tsx scripts/swarm_passport.ts",
     "evidence": "node scripts/export-evidence.mjs",
     "app:build": "bun run evidence && cd app && bun --bun run build"
   },

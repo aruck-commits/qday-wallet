@@ -15,7 +15,7 @@ type DemoState = {
 };
 
 export const useDemoStore = create<DemoState>((set) => ({
-  screen: "home",
+  screen: "hero",
   activeChain: "devnet",
   runnerStep: 0,
   running: false,

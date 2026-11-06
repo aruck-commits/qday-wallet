@@ -40,3 +40,5 @@ The unstaked sidecar raw response contains the literal `validation frame 0: ran 
 ## Attribution
 
 AI session records are maintained in `AI_USAGE.md` and `specs/prompts/`. The build follows `AGENTS.md` and the pinned constants in `specs/SPEC.md`.
+
+Demo UI follows specs/UI_SPEC.md plus design principles adapted from a local frontend skills pack (telemetry disabled).

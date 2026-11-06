@@ -15,20 +15,18 @@ Q-Day Wallet is a quantum-safe smart-wallet prototype using NIST ML-DSA-44 (FIPS
 | Arkiv + Swarm | Entity `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048`; [passport reference](https://bzz.limo/bzz/81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74), [Arkiv patch tx](https://rabdi.explorer.arkiv.network/tx/0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5) |
 | Gas | Our verify average **2,664,784**; pinned reference **2,689,594**; see `docs/GAS.md` |
 
-The staked G1 admission, mined G3 PQ frame, and ENS PQ write/rotation remain unavailable in this run. The Swarm passport now has a byte-equal public read-back and Arkiv patch evidence.
+The staked G1 admission and mined G3 PQ frame remain unavailable: the shared devnet has no connected miner peers. ENS PQ write and rotation are complete (see ENS identity). The Swarm passport now has a byte-equal public read-back and Arkiv patch evidence.
 
-## ENS final state
+## ENS identity (Sepolia, written and rotated)
 
-PQ write on the default resolver requires `ROLE_SET_TEXT`; registration grants resolver and subregistry roles only. The captured `eth_call` proof is in `docs/FINDINGS.md` under the final ENS diagnosis. The ENS pick therefore stands on the name owned by the PQ wallet, `executePq` infrastructure, regression asserts, and this honest limitation.
+- Our own Permissioned Resolver: `0x863b62fA8988Ba340C24F389FFDF568b3ccbc8e4`, deployed through the Verifiable Factory with the relayer as admin.
+- The wallet holds `ROLE_SET_TEXT` only for the `pq-key` text key (argument-scoped grant, `grantSetterRoles`).
+- `qdaywallet.eth` points at that resolver (`setResolver` through `executePq`).
+- `pq-key` was written through `executePq` and read back through UniversalResolverV2.
+- The ML-DSA key was rotated; the owner is unchanged; the `pq-key` record was then updated and read back again.
+- Transactions and readback are in `docs/ens-resolver.json`. Scripts: `yarn ens:resolver`, `scripts/ens_rotate.ts`, `scripts/ens_record_rotate.ts`.
 
-## Arkiv registry
-
-- Writer wallet (relayer that created and patched the entity): `0xD73977DdE03abAB3984cFb1e0A2d7629a693A4a1`
-- Entity: `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048`, schema `qday.migration`, chain 7794095
-- Query we run (SDK, `yarn arkiv:read`): `scheme = "ML-DSA-44"` returns 1 entity
-- The Registry screen shows the build-time result from `app/src/data/arkivLive.json`
-- Fields and expiry: `arkiv/schema.md` · Feedback: `arkiv/friction.md` · Swarm: `arkiv/swarm.md`
-
+Earlier notes said the write was unreachable. That was true only for the default shared resolver. The ENS docs describe per-account resolvers, which the name owner can deploy and administer.
 ## Honest limitations
 
 The ML-DSA verifier is third-party and unaudited. The prototype retains residual key, authorization, and integration risk. Private keys never leave the active session in the demo path. See `docs/VULNERABILITIES.md`.

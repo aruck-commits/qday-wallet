@@ -1,27 +1,27 @@
 import { create } from "zustand";
 
-export type Screen = "hero" | "console" | "key" | "registry" | "identity" | "architecture";
+export type Screen = "home" | "hero" | "console" | "key" | "registry" | "identity" | "architecture";
 
 type DemoState = {
   screen: Screen;
-  dryRun: boolean;
+  activeChain: "devnet" | "sepolia";
   runnerStep: number;
   running: boolean;
   setScreen: (screen: Screen) => void;
-  setDryRun: (dryRun: boolean) => void;
+  setActiveChain: (activeChain: "devnet" | "sepolia") => void;
   setRunnerStep: (runnerStep: number) => void;
   setRunning: (running: boolean) => void;
   reset: () => void;
 };
 
 export const useDemoStore = create<DemoState>((set) => ({
-  screen: "hero",
-  dryRun: true,
+  screen: "home",
+  activeChain: "devnet",
   runnerStep: 0,
   running: false,
   setScreen: (screen) => set({ screen }),
-  setDryRun: (dryRun) => set({ dryRun }),
+  setActiveChain: (activeChain) => set({ activeChain }),
   setRunnerStep: (runnerStep) => set({ runnerStep }),
   setRunning: (running) => set({ running }),
-  reset: () => set({ screen: "hero", runnerStep: 0, running: false }),
+  reset: () => set({ screen: "home", runnerStep: 0, running: false }),
 }));

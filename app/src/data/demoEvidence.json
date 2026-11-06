@@ -1,13 +1,48 @@
 {
-  "generatedAt": "2026-11-06T13:30:57.781Z",
-  "mode": "DRY RUN",
+  "generatedAt": "2026-11-06T14:05:51.972Z",
+  "exportMode": "live-read-only",
+  "account": {
+    "address": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
+    "ensName": "qdaywallet.eth"
+  },
+  "deployments": {
+    "factory": "0xa37d3a42c4117bafe189dd21b6170a96f17406b3",
+    "verifier": "0x17b01049d4790091ac911ead126337abae1517e4",
+    "wallet": "0xc5a8cb266cf7f56dcf017a5f766bf927c189091f"
+  },
+  "keyRegistry": {
+    "registerA": "0x6E381DD361535Fee2F3a702DeCc8120746fE7f86",
+    "registerT": "0x109c4482EE47ED22253481c6Dbb1440c933C3BEB"
+  },
+  "live": {
+    "devnet": {
+      "chainId": 1337,
+      "participant": "0x3b7CdFf8ED99272338abF93A3B31b13421f779b1",
+      "lastBlock": 4569,
+      "balanceWei": "549660836018000000",
+      "balanceEth": "0.549661",
+      "stakeSubject": "0xf2bae312209239cb623c23d2f131269fc5f46006",
+      "stakeWei": "12000000000000000",
+      "stakeEth": "0.012",
+      "stakeReadback": true,
+      "registry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+      "error": null
+    },
+    "sepolia": {
+      "chainId": 11155111,
+      "latestBlock": 12077040,
+      "error": null
+    }
+  },
   "protocol": {
     "name": "ML-DSA-44",
     "publicKeyBytes": "1,312 B",
     "secretKeyBytes": "2,560 B",
     "signatureBytes": "2,420 B",
-    "frameMode": "VERIFY",
-    "sigScheme": "ARBITRARY"
+    "frameMode": "VERIFY 1",
+    "sigScheme": "ARBITRARY",
+    "executionLimit": "3,200,000",
+    "intentBytes": "32 B"
   },
   "hero": {
     "headline": "The wallet is the identity.",
@@ -31,7 +66,7 @@
     "unstaked": {
       "verdict": "REJECTED",
       "rule": "OOG",
-      "detail": "ran out of gas (Out Of Gas)",
+      "detail": "validation frame 0: ran out of gas (Out Of Gas)",
       "rawAvailable": true,
       "raw": {
         "error": {
@@ -43,20 +78,20 @@
       }
     },
     "staked": {
-      "verdict": "UNAVAILABLE",
+      "verdict": "STAKED",
       "txHash": null,
       "explorerUrl": null,
       "stakeWei": "12000000000000000",
       "stakeEth": "0.012",
       "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
       "stakeReadback": true,
-      "reason": "gateway-to-miner peer gate was empty; no admitted frame was resubmitted"
+      "reason": "No admitted frame hash is present in the captured evidence; the next sidecar window is required."
     },
     "pq": {
-      "verdict": "UNAVAILABLE",
+      "verdict": "QUEUED",
       "txHash": null,
       "explorerUrl": null,
-      "reason": "G3 skipped-risk while sidecar peer gate was empty"
+      "reason": "PQ frame admission — awaiting devnet window. Captured proof in FINDINGS."
     }
   },
   "ens": {
@@ -65,12 +100,12 @@
     "explorerUrl": "https://sepolia.etherscan.io/tx/0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1",
     "name": "qdaywallet.eth",
     "pqWrite": {
-      "verdict": "UNAVAILABLE",
-      "reason": "PQ write unavailable: the default resolver requires ROLE_SET_TEXT; the captured eth_call found no reachable grantor."
+      "verdict": "QUEUED",
+      "reason": "PQ write unavailable: the default resolver requires ROLE_SET_TEXT; the captured eth_call found no reachable grantor. See captured proof in FINDINGS."
     },
     "rotation": {
-      "verdict": "UNAVAILABLE",
-      "reason": "PQ write unavailable: the default resolver requires ROLE_SET_TEXT; the captured eth_call found no reachable grantor."
+      "verdict": "QUEUED",
+      "reason": "PQ write unavailable: the default resolver requires ROLE_SET_TEXT; the captured eth_call found no reachable grantor. See captured proof in FINDINGS."
     }
   },
   "arkiv": {
@@ -81,6 +116,96 @@
     "swarmByteEqual": true,
     "patchTx": "0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5"
   },
+  "txHistory": [
+    {
+      "label": "ML-DSA factory deploy",
+      "chain": "devnet",
+      "kind": "deploy",
+      "hash": "0x0d85e0dcab5b296c02356bd9efc46d380721362d70d5d860d85dcf45cf107b21",
+      "explorerUrl": "https://explorer.altmempool.wtf/0x0d85e0dcab5b296c02356bd9efc46d380721362d70d5d860d85dcf45cf107b21",
+      "status": "mined"
+    },
+    {
+      "label": "ML-DSA verifier deploy",
+      "chain": "devnet",
+      "kind": "deploy",
+      "hash": "0xc340e9ac36c0c1faf2cf5231b81b27464ea80afd18318f6efd24b32de3dfb00d",
+      "explorerUrl": "https://explorer.altmempool.wtf/0xc340e9ac36c0c1faf2cf5231b81b27464ea80afd18318f6efd24b32de3dfb00d",
+      "status": "mined"
+    },
+    {
+      "label": "QDayWallet deploy",
+      "chain": "devnet",
+      "kind": "deploy",
+      "hash": "0xb83ab344ad0ebacf39721ac0d236a9e76d798e95f66f18d5ff0e41fc424b56cf",
+      "explorerUrl": "https://explorer.altmempool.wtf/0xb83ab344ad0ebacf39721ac0d236a9e76d798e95f66f18d5ff0e41fc424b56cf",
+      "status": "mined"
+    },
+    {
+      "label": "registerA precompute",
+      "chain": "devnet",
+      "kind": "precompute",
+      "hash": "0xc6fad77d74ac18a9a7afa91e048b044b554dba2263661ad62791ad9009279452",
+      "explorerUrl": "https://explorer.altmempool.wtf/0xc6fad77d74ac18a9a7afa91e048b044b554dba2263661ad62791ad9009279452",
+      "status": "mined"
+    },
+    {
+      "label": "registerT precompute",
+      "chain": "devnet",
+      "kind": "precompute",
+      "hash": "0x24ce10d1dfda5e2d6bb251020730fc42581a016bb1c3ef424140aa7872055060",
+      "explorerUrl": "https://explorer.altmempool.wtf/0x24ce10d1dfda5e2d6bb251020730fc42581a016bb1c3ef424140aa7872055060",
+      "status": "mined"
+    },
+    {
+      "label": "SpikeWallet deploy",
+      "chain": "devnet",
+      "kind": "deploy",
+      "hash": "0x6034f81ae7704638f746845078afd16e34f13ed82774d16dc85604e1ed61028b",
+      "explorerUrl": "https://explorer.altmempool.wtf/0x6034f81ae7704638f746845078afd16e34f13ed82774d16dc85604e1ed61028b",
+      "status": "mined"
+    },
+    {
+      "label": "stake record",
+      "chain": "devnet",
+      "kind": "stake",
+      "hash": "0xc8703b08be9c0f627b09068123b24919f5e4069b7615833bc03cf8595d07aefa",
+      "explorerUrl": "https://explorer.altmempool.wtf/0xc8703b08be9c0f627b09068123b24919f5e4069b7615833bc03cf8595d07aefa",
+      "status": "pending"
+    },
+    {
+      "label": "ENS qdaywallet.eth registration",
+      "chain": "sepolia",
+      "kind": "ens-register",
+      "hash": "0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1",
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0xd6d1e88de447f6a71d8353f6cf811daacd29cd722a19072bdff390b0951625f1",
+      "status": "mined"
+    },
+    {
+      "label": "Arkiv entity create",
+      "chain": "arkiv",
+      "kind": "entity",
+      "hash": "0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048",
+      "explorerUrl": "https://rabdi.explorer.arkiv.network/tx/0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048",
+      "status": "recorded"
+    },
+    {
+      "label": "Arkiv entity patch",
+      "chain": "arkiv",
+      "kind": "patch",
+      "hash": "0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5",
+      "explorerUrl": "https://rabdi.explorer.arkiv.network/tx/0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5",
+      "status": "recorded"
+    },
+    {
+      "label": "Swarm migration passport",
+      "chain": "swarm",
+      "kind": "passport",
+      "hash": "81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74",
+      "explorerUrl": "https://bzz.limo/bzz/81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74",
+      "status": "verified"
+    }
+  ],
   "gas": {
     "measuredVerify": "2,664,784",
     "pinnedRegistered": "2,689,594",

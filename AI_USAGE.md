@@ -45,3 +45,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-08 | Codex | Tau ENS diagnosis, real G6 screens, and G7 deliverables | prompts/2026-11-08-tau.md |
 | 2026-11-08 | Codex | ETA Swarm bzz.limo byte-equal read-back, Arkiv patch, G6 console substance, and final video beats | prompts/2026-11-08-eta.md |
 | 2026-11-06 | Codex | UI-2 design-pack rebuild, brand system, evidence-only screens, and craft polish; telemetry disabled | prompts/2026-11-06-psi-ui2-design-pack.md |
+| 2026-11-06 | Codex | χ-v2 live read-only evidence export, account header, and wallet-home foundation | prompts/2026-11-06-chi-v2-wallet-product.md |

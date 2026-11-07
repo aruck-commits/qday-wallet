@@ -39,7 +39,7 @@ The demo reads committed evidence. Re-generating evidence needs local keys in `.
 | Arkiv + Swarm | Entity `0xc6c072904c6dd995b59046e2465e33283f09fb14c61c7f63c9ccc723c84dd048`; [passport reference](https://bzz.limo/bzz/81c74b4669f7c8fd574cb4fa2f911e7d5603a54e12fd9fe8ea32e04474c49c74), [Arkiv patch tx](https://rabdi.explorer.arkiv.network/tx/0xcd9c4e93f14a9168327cd494535866068923dc9dc0ead1e86354c9f0ffb4d8f5) |
 | Gas | Our verify average **2,664,784**; pinned reference **2,689,594**; see `docs/GAS.md` |
 
-The staked G1 admission and mined G3 PQ frame remain unproven. The latest live read saw one gateway peer; the staked ARBITRARY frame still failed validation with literal `Out Of Gas` at both the 3.2M and 6.5M declared VERIFY limits. ENS PQ write and rotation are complete (see ENS identity). The Swarm passport has a byte-equal public read-back and Arkiv patch evidence, but no postage-batch bonus claim is made.
+The staked G1 admission and mined G3 PQ frame remain unproven. The last bounded run saw one gateway peer but still failed validation with literal `Out Of Gas` at both the 3.2M and 6.5M declared VERIFY limits; the latest read-only probe is back to zero peers, so no retry is being made. ENS PQ write and rotation are complete (see ENS identity). The Swarm passport has a byte-equal public read-back and Arkiv patch evidence, but no postage-batch bonus claim is made.
 
 ## ENS identity (Sepolia, written and rotated)
 

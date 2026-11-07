@@ -52,3 +52,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-07 | Codex | read-only submission hardening: refreshed evidence export, reconciled current G1/G3/ENS/Swarm status, and verified build gates | prompts/2026-11-07-submission-hardening.md |
 | 2026-11-07 | Codex | logo refresh from supplied visual direction: original shield/lens SVG, header treatment, favicon, and production build | prompts/2026-11-07-logo-refresh.md |
 | 2026-11-07 | Codex | final closure: read-only peer gate, refreshed live evidence, honest zero-peer status, and final app verification | prompts/2026-11-07-final-closure.md |
+| 2026-11-07 | Codex | 20-minute frontend skills-pack craft pass: shell hierarchy, console controls, focus states, tabular evidence numerals, and mobile-safe interactions; telemetry disabled | prompts/2026-11-07-ui-polish-pack.md |

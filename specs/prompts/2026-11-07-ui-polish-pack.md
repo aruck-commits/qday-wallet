@@ -1,0 +1,3 @@
+# UI polish pack — 2026-11-07
+
+Codex reviewed `SKILLS_SETUP_GUIDE.md`, the local frontend skills pack, the existing `app/brand.md`, and the current evidence-driven Vite UI. Applied a short craft pass to the shell and S1 console only: stronger instrument-panel hierarchy, explicit focus/press states, tabular evidence numerals, mobile-safe hit targets, and clearer read-only journey controls. No evidence values, claims, links, or telemetry were added; local pack telemetry remained disabled. Verified `bunx tsc --noEmit` from the repository root, `bun run build` in `app/`, and Vite preview HTTP 200.

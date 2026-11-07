@@ -393,3 +393,133 @@ body { background: var(--bg); }
 @media (max-width: 600px) { .evidence-caption { white-space: normal; font-size: 9px; line-height: 1.5; } }
 
 .brand-mark { transition: transform .15s ease-out; }
+
+/* ---------- 20-minute craft pass ----------
+   Intent: make the evidence surface feel like a deliberate instrument panel.
+   No new claims or data; only hierarchy, focus, and interaction polish. */
+:root {
+  --ease-qday: cubic-bezier(.23, 1, .32, 1);
+  --panel-radius: 10px;
+}
+
+.account-header {
+  box-shadow: 0 1px 0 rgba(127, 220, 180, .12), 0 8px 24px rgba(0, 0, 0, .12);
+}
+
+.brand {
+  min-height: 40px;
+  transition: color 150ms var(--ease-qday), transform 150ms var(--ease-qday);
+}
+.brand:hover { color: var(--green); transform: translateY(-1px); }
+
+.chain-switcher button,
+.tab-rail button {
+  min-height: 40px;
+  transition: color 150ms var(--ease-qday), background-color 150ms var(--ease-qday), border-color 150ms var(--ease-qday);
+}
+.chain-switcher button:hover { color: var(--text); background: rgba(127, 220, 180, .06); }
+.chain-switcher .chain-active { box-shadow: inset 0 0 0 1px rgba(127, 220, 180, .22); }
+
+.screen {
+  border-radius: var(--panel-radius);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .025) inset, 0 18px 48px rgba(0, 0, 0, .12);
+}
+
+.button-primary,
+.button-quiet,
+.close-button {
+  min-height: 40px;
+  transition: transform 150ms var(--ease-qday), background-color 150ms var(--ease-qday), border-color 150ms var(--ease-qday), color 150ms var(--ease-qday), box-shadow 150ms var(--ease-qday);
+}
+.button-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(127, 220, 180, .16); }
+.button-primary:active,
+.button-quiet:active,
+.close-button:active { transform: translateY(1px); }
+.button-quiet:hover { background: rgba(127, 220, 180, .055); }
+
+.screen-heading { position: relative; }
+.screen-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -20px;
+  height: 1px;
+  background: var(--line-strong);
+  max-width: 460px;
+  opacity: .7;
+}
+
+.hero-stat,
+.home-card,
+.lane-card,
+.compose-panel,
+.arkiv-live {
+  transition: transform 180ms var(--ease-qday), border-color 180ms var(--ease-qday), background-color 180ms var(--ease-qday), box-shadow 180ms var(--ease-qday);
+}
+.hero-stat:hover,
+.home-card:hover,
+.lane-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .14);
+}
+
+.home-card strong,
+.hero-stat strong,
+.gas-values,
+.stake-readback strong,
+.stat-row strong,
+.account-chip,
+.balance-chip,
+.block-ticker {
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-stat strong,
+.home-card strong { letter-spacing: -.025em; }
+.hero-stat > span:last-child,
+.home-card p,
+.home-card .card-foot { line-height: 1.55; }
+
+.lane-card.lane-active {
+  box-shadow: 0 0 0 1px currentColor, 0 14px 34px rgba(0, 0, 0, .2);
+}
+.lane-red.lane-active { color: var(--red); }
+.lane-amber.lane-active { color: var(--amber); }
+.lane-green.lane-active { color: var(--green); }
+.lane-card h3,
+.lane-card .section-kicker,
+.lane-card .raw-window,
+.lane-card .stake-readback,
+.lane-card .d-outcome { color: var(--text); }
+
+.raw-window summary {
+  min-height: 40px;
+  transition: color 150ms var(--ease-qday), background-color 150ms var(--ease-qday);
+}
+.raw-window summary:hover { color: var(--text); background: rgba(127, 220, 180, .04); }
+.window-toggle { letter-spacing: .04em; }
+
+.status-pipeline span { min-height: 28px; display: flex; align-items: center; }
+.history-link,
+.passport-launch,
+.table-row button {
+  transition: color 150ms var(--ease-qday), background-color 150ms var(--ease-qday), border-color 150ms var(--ease-qday), transform 150ms var(--ease-qday);
+}
+.history-link:hover,
+.passport-launch:hover { color: var(--green); transform: translateX(2px); }
+.table-row button:active { transform: translateY(1px); }
+
+.limitation-strip span:first-child { color: var(--text); }
+
+@media (max-width: 600px) {
+  .screen-heading::after { bottom: -12px; }
+  .screen-heading { margin-bottom: 30px; }
+  .hero-stat, .home-card, .lane-card { box-shadow: none; }
+  .hero-stat:hover, .home-card:hover, .lane-card:hover { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand, .button-primary, .button-quiet, .close-button, .hero-stat, .home-card, .lane-card, .history-link, .passport-launch, .table-row button { transition: none; }
+}

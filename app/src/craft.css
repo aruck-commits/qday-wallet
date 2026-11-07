@@ -242,7 +242,8 @@ body { background: var(--bg); }
   border-bottom: 1px solid var(--line);
   box-shadow: none;
 }
-.brand-mark { color: var(--green); }
+.brand-mark { width: 24px; height: 24px; display: block; flex: 0 0 24px; font-size: 0; background: url("./assets/logo.svg") center / contain no-repeat; }
+.brand:hover .brand-mark { transform: rotate(-3deg) scale(1.04); }
 .chain-switcher { background: var(--panel2); border-color: var(--line); }
 .chain-switcher .chain-active { background: #1b2a24; color: var(--green); }
 .account-chip { border-color: var(--line-strong); color: var(--text); }
@@ -391,4 +392,4 @@ body { background: var(--bg); }
 
 @media (max-width: 600px) { .evidence-caption { white-space: normal; font-size: 9px; line-height: 1.5; } }
 
-.brand-logo { display: block; flex-shrink: 0; }
+.brand-mark { transition: transform .15s ease-out; }

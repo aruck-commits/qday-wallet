@@ -1,15 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <defs>
-    <linearGradient id="qd" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#9aa8ff"/>
-      <stop offset="1" stop-color="#7fdcb4"/>
-    </linearGradient>
-  </defs>
-  <path d="M32 4 L56 12 V30 C56 46 46 56 32 60 C18 56 8 46 8 30 V12 Z" stroke="url(#qd)" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M32 10 L50 16 V30 C50 42 43 50 32 54 C21 50 14 42 14 30 V16 Z" stroke="url(#qd)" stroke-width="1" opacity=".55"/>
-  <path d="M14 22 L24 16 M50 22 L40 16 M14 38 L24 46 M50 38 L40 46" stroke="url(#qd)" stroke-width=".8" opacity=".5"/>
-  <circle cx="32" cy="30" r="12" stroke="url(#qd)" stroke-width="5.5"/>
-  <path d="M37 36 L47 48" stroke="url(#qd)" stroke-width="5.5" stroke-linecap="round"/>
-  <circle cx="32" cy="30" r="6" stroke="url(#qd)" stroke-width="1" opacity=".8"/>
-  <path d="M26 30 H38 M32 24 V36 M28 26 L36 34 M36 26 L28 34" stroke="url(#qd)" stroke-width=".7" opacity=".7"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Q-Day Wallet mark</title>
+  <desc id="desc">A protective shield with a quantum lens.</desc>
+  <path d="M32 5.5 51.5 12v17.4c0 12.6-7.2 22-19.5 28.1C19.7 51.4 12.5 42 12.5 29.4V12L32 5.5Z" stroke="#35df84" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 12.5 45 17v12.2c0 8.2-4.2 14.8-13 19.8-8.8-5-13-11.6-13-19.8V17l13-4.5Z" stroke="#35df84" stroke-opacity=".32" stroke-width="1.4" stroke-linejoin="round"/>
+  <circle cx="29.5" cy="29" r="9.5" fill="#07110d" stroke="#35df84" stroke-width="3.5"/>
+  <path d="m36.5 36 9.5 9.5" stroke="#a78bfa" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M25 29h9M29.5 24.5v9" stroke="#35df84" stroke-width="1.5" stroke-linecap="round" opacity=".9"/>
+  <circle cx="29.5" cy="29" r="2" fill="#a78bfa"/>
 </svg>

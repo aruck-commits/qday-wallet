@@ -3,7 +3,6 @@ import "@fontsource/space-mono/400.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import evidenceJson from "./data/demoEvidence.json";
-import logoUrl from "./assets/logo.svg";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { useDemoStore, type Screen } from "./lib/demoStore";
 import type { DemoEvidence } from "./lib/evidence";

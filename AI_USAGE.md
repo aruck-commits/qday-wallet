@@ -50,3 +50,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-06 | opencode (GLM, build mode) | G6 craft pass execution: Midnight Stake unification, hero choreography, JSON highlighting, chi.css race fix, balance chip; skills pack installed with telemetry off | prompts/2026-11-06-craft-pass.md |
 | 2026-11-06 | Codex | completion push: live peer-gate check and honest booth/video narrative alignment | prompts/2026-11-06-completion-push.md |
 | 2026-11-07 | Codex | read-only submission hardening: refreshed evidence export, reconciled current G1/G3/ENS/Swarm status, and verified build gates | prompts/2026-11-07-submission-hardening.md |
+| 2026-11-07 | Codex | logo refresh from supplied visual direction: original shield/lens SVG, header treatment, favicon, and production build | prompts/2026-11-07-logo-refresh.md |

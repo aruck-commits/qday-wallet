@@ -54,3 +54,4 @@ we go, in the same commits as the work — never reconstructed at the end). Prom
 | 2026-11-07 | Codex | final closure: read-only peer gate, refreshed live evidence, honest zero-peer status, and final app verification | prompts/2026-11-07-final-closure.md |
 | 2026-11-07 | Codex | 20-minute frontend skills-pack craft pass: shell hierarchy, console controls, focus states, tabular evidence numerals, and mobile-safe interactions; telemetry disabled | prompts/2026-11-07-ui-polish-pack.md |
 | 2026-11-07 | Codex | S1 console journey focus: Run journey now scrolls the recorded A-to-D evidence pipeline into view | prompts/2026-11-07-console-journey-focus.md |
+| 2026-11-07 | Codex | Reconciled current evidence into a fast read-aloud recording script with exact rule strings and honest missing-artifact wording | prompts/2026-11-07-demo-readalong.md |

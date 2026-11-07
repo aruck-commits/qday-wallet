@@ -450,6 +450,8 @@ body { background: var(--bg); }
   opacity: .7;
 }
 
+.console-journey { scroll-margin-top: 112px; }
+
 .hero-stat,
 .home-card,
 .lane-card,

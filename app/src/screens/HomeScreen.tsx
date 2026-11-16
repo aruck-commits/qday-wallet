@@ -1,25 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { CopyChip } from "../components/CopyChip";
+import { ethStringToWei, LedgerStrip } from "../components/LedgerStrip";
 import { RefreshLine } from "../components/RefreshLine";
+import { Rosette } from "../components/Rosette";
 import { StatusChip } from "../components/StatusChip";
 import evidenceJson from "../data/demoEvidence.json";
 import { ensureLiveRefresh, useWalletStore } from "../lib/walletStore";
 import { useDemoStore } from "../lib/demoStore";
 import { SEPOLIA } from "../lib/chain";
-import { formatEth, formatGas, truncateHash } from "../lib/format";
-
-/** readSepoliaLive returns decimal-ETH strings; convert to wei for lib/format. */
-function ethStringToWei(eth: string): bigint | null {
-  const match = /^(\d+)(?:\.(\d+))?$/.exec(eth.trim());
-  if (!match) return null;
-  const fraction = (match[2] ?? "").padEnd(18, "0").slice(0, 18);
-  try { return BigInt(match[1] + fraction); } catch { return null; }
-}
+import { formatEth, truncateHash } from "../lib/format";
 
 const fade = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 const glyphLetter = (kind: string) => ({ deploy: "D", precompute: "P", stake: "S", "ens-register": "E", entity: "A", patch: "A", passport: "W" })[kind] ?? "T";
 
+/**
+ * Home (UI spec §5) — product landing: serif hero (verbatim copy, neutral
+ * rosette at 6%) → LedgerStrip (four live values, count-ups on change) →
+ * three text-led capability cards → THE RECORD (editorial index of the 11
+ * captured artifacts + the permanent amber not-achieved line) → session
+ * intents. One primary CTA: Send with a PQ key (or Generate).
+ */
 export function HomeScreen() {
   const live = useWalletStore((state) => state.live);
   const intents = useWalletStore((state) => state.intents);
@@ -27,7 +28,7 @@ export function HomeScreen() {
   const fingerprint = useWalletStore((state) => state.fingerprint);
   const refreshLive = useWalletStore((state) => state.refreshLive);
   const setScreen = useDemoStore((state) => state.setScreen);
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotion() ?? false;
 
   useEffect(() => { void ensureLiveRefresh(); }, []);
 
@@ -43,84 +44,95 @@ export function HomeScreen() {
     setSessionFpShort(fingerprint ? `sha256:${fingerprint.slice(0, 6)}…${fingerprint.slice(-6)}` : null);
   }, [fingerprint]);
 
-  const balanceBusy = live.refreshing && !sepolia;
-  const balanceError = sepolia && !sepolia.online && sepolia.error ? sepolia.error : null;
-  const balanceDisplay = participantWei !== null ? formatEth(participantWei) : null;
-  const zeroHonest = participantWei === 0n;
-
   const stake = evidenceJson.demo.staked;
-  const stakeDisplay = formatEth(stake.stakeWei);
+  const stakeDisplay = formatEth(stake.stakeWei)?.display ?? null;
+
+  const ensOnline = live.ens?.online === true;
+  const arkivOnline = live.arkiv?.online === true;
 
   return (
-    <motion.section className="screen" initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: reduce ? 0 : 0.06 } } }}>
-      <motion.div className="screen-heading v2-account-strip" variants={fade}>
-        <div>
-          <p className="eyebrow">HOME / ACCOUNT OVERVIEW</p>
-          <h2>{evidenceJson.ens.name}</h2>
-          <span className="v2-owner-chip">OWNER / <b>{truncateHash(SEPOLIA.hookedWallet)}</b></span>
-        </div>
-        <button type="button" className="button-primary" onClick={() => setScreen("send")} aria-label="Go to Send">Send <span aria-hidden="true">→</span></button>
-      </motion.div>
-
-      <motion.div className="v2-zone-b" variants={fade}>
-        <article className="v2-panel v2-stat-panel" aria-label="Sepolia balance">
-          <p className="v2-kicker">BALANCE / SEPOLIA 11155111</p>
-          {balanceBusy ? (
-            <span className="v2-skeleton" style={{ width: 150 }} role="status" aria-label="loading balance" />
-          ) : sepolia?.online && balanceDisplay ? (
-            zeroHonest ? (
-              <>
-                <strong className="big">0.0000 ETH</strong>
-                <p className="v2-caption">0.0000 ETH — reads work; nothing was funded on Sepolia for this address.</p>
-              </>
-            ) : (
-              <strong className="big" title={`${balanceDisplay.full} ETH · ${formatGas(participantWei)} wei`}>{balanceDisplay.display} ETH</strong>
-            )
-          ) : (
-            <>
-              <strong className="big v2-dimmed">{lastGood.current.wei !== null ? `${formatEth(lastGood.current.wei)?.display} ETH` : "READ UNAVAILABLE"}</strong>
-              {lastGood.current.wei !== null && <span className="v2-chip v2-chip-amber">stale</span>}
-              {balanceError && <p className="v2-error" role="alert">{balanceError.slice(0, 160)}</p>}
-              {!sepolia && !balanceError && <p className="v2-caption">waiting for the first live read…</p>}
-              {balanceError && <button type="button" className="button-quiet" onClick={() => void refreshLive()}>retry</button>}
-            </>
-          )}
-          <span className="v2-stat-foot">block {sepolia?.online && sepolia.blockNumber ? formatGas(Number(sepolia.blockNumber)) : (lastGood.current.block ? `${formatGas(Number(lastGood.current.block))} (last good)` : "—")} · address {truncateHash(SEPOLIA.participant)}</span>
-        </article>
-
-        <article className="v2-panel v2-stat-panel" aria-label="Registry stake readback">
-          <p className="v2-kicker">STAKE READBACK / REGISTRY</p>
-          <strong className="big" title={stakeDisplay ? `${stakeDisplay.full} ETH · ${formatGas(stake.stakeWei)} wei` : undefined}>{stakeDisplay?.display ?? "—"} ETH</strong>
-          <StatusChip tone={stake.stakeReadback ? "mint" : "amber"}>{stake.stakeReadback ? "STAKED / READBACK OK" : "STAKED / READBACK PENDING"}</StatusChip>
-          <span className="v2-stat-foot">subject {truncateHash(evidenceJson.live.devnet.stakeSubject)} / registry {truncateHash(stake.stakeRegistry)}</span>
-          <p className="v2-note-amber">devnet offline — value is committed evidence, not a live read.</p>
-        </article>
-
-        <article className="v2-panel v2-stat-panel" aria-label="Session key status">
-          <p className="v2-kicker">SESSION KEY</p>
+    <motion.section className="screen" initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: reduce ? 0 : 0.08 } } }}>
+      {/* ---------- hero ---------- */}
+      <motion.div className="v3-hero" variants={fade}>
+        <div className="v3-hero-rosette" aria-hidden="true"><Rosette /></div>
+        <p className="eyebrow">Q-DAY WALLET · POST-QUANTUM SPEND AUTHORIZATION</p>
+        <h1 className="v3-display-xl">
+          Harvest now, decrypt later is a <em>today</em> problem.
+        </h1>
+        <p className="v3-hero-sub">
+          Every ECDSA signature ever broadcast is being recorded against the day a quantum computer can forge it.
+          Q-Day Wallet signs spends with ML-DSA-44 (FIPS 204) — 2,420-byte signatures, verified on-chain for{" "}
+          {evidenceJson.gas.measuredVerify} gas, admitted through EIP-8141 frame transactions.
+        </p>
+        <div className="v3-hero-cta">
           {keypair ? (
-            <>
-              <span className="v2-keypanel-state"><i className="v2-dot v2-dot-violet" aria-hidden="true" />ML-DSA-44 READY</span>
-              <span className="v2-keypanel-fp">{sessionFpShort ?? "sha256:…"}</span>
-            </>
+            <button type="button" className="button-primary" onClick={() => setScreen("send")} aria-label="Go to Send">
+              Send with a PQ key <span aria-hidden="true">→</span>
+            </button>
           ) : (
-            <span className="v2-keypanel-state"><i className="v2-dot v2-dot-amber v2-dot-hollow" aria-hidden="true" />NOT GENERATED</span>
+            <button type="button" className="button-violet" onClick={() => setScreen("keys")} aria-label="Go to Keys and generate a session key">
+              Generate your PQ key
+            </button>
           )}
-          <span className="v2-caption">session-only — refresh clears it</span>
-          <button type="button" className="button-quiet v2-keypanel-cta" onClick={() => setScreen("keys")}>{keypair ? "Manage keys →" : "Generate in Keys →"}</button>
+        </div>
+      </motion.div>
+
+      {/* ---------- ledger strip ---------- */}
+      <motion.div variants={fade}>
+        <LedgerStrip
+          sepolia={sepolia}
+          lastGoodWei={lastGood.current.wei}
+          lastGoodBlock={lastGood.current.block}
+          stakeDisplay={stakeDisplay}
+          stakeReadback={stake.stakeReadback}
+          hasKey={Boolean(keypair)}
+          reduce={reduce}
+        />
+      </motion.div>
+
+      {/* ---------- capability cards ---------- */}
+      <motion.div className="v3-caps" variants={fade}>
+        <article className="v3-cap v3-cap-accent-violet" aria-label="PQ keys in-browser">
+          <p className="v2-kicker">PQ KEYS IN-BROWSER</p>
+          <p className="v3-cap-statement">Your key is born here.</p>
+          <div className="v3-cap-row">
+            <span className="v2-mono">{sessionFpShort ?? "sha256:86c769…f28b62"}</span>
+            <StatusChip tone={keypair ? "violet" : "amber"}>{keypair ? "session-only" : "on-chain v1"}</StatusChip>
+          </div>
+          <button type="button" className="button-quiet" onClick={() => setScreen("keys")} aria-label="Open the Keys screen">
+            {keypair ? "Manage keys →" : "Run the ceremony →"}
+          </button>
+        </article>
+
+        <article className="v3-cap v3-cap-accent-mint" aria-label="ENS identity">
+          <p className="v2-kicker">ENS IDENTITY</p>
+          <p className="v3-cap-statement">The name already points at a PQ key.</p>
+          <div className="v3-cap-row">
+            <span className="v2-mono">qdaywallet.eth</span>
+            <StatusChip tone={ensOnline ? "mint" : "amber"} title={ensOnline ? "pq-key resolves live right now" : "values from committed evidence — live read unavailable"}>pq-key {ensOnline ? "LIVE" : "COMMITTED"}</StatusChip>
+            <span className="v3-cap-foot">resolver {truncateHash(evidenceJson.ens.pqWrite.resolver ?? SEPOLIA.resolver)}</span>
+          </div>
+          <button type="button" className="button-quiet" onClick={() => setScreen("identity")} aria-label="Open the Identity screen">Open Identity →</button>
+        </article>
+
+        <article className="v3-cap v3-cap-accent-amber" aria-label="Live registry">
+          <p className="v2-kicker">LIVE REGISTRY</p>
+          <p className="v3-cap-statement">The migration record is public.</p>
+          <div className="v3-cap-row">
+            <CopyChip value={evidenceJson.arkiv.entity} label="Copy the Arkiv entity key" />
+            <StatusChip tone="mint">ACTIVE</StatusChip>
+            <StatusChip tone={arkivOnline ? "mint" : "amber"} title={arkivOnline ? "entity read live from the Rabdi RPC" : "values from committed evidence — live read unavailable"}>{arkivOnline ? "LIVE" : "COMMITTED"}</StatusChip>
+          </div>
+          <button type="button" className="button-quiet" onClick={() => setScreen("registry")} aria-label="Open the Registry screen">Open Registry →</button>
         </article>
       </motion.div>
 
-      <motion.div className="v2-shortcuts" variants={fade}>
-        <button type="button" className="button-quiet" onClick={() => setScreen("send")} aria-label="Go to Send">Sign a spend intent →</button>
-        <button type="button" className="button-quiet" onClick={() => setScreen("keys")} aria-label="Go to Keys">Run the key ceremony →</button>
-      </motion.div>
-
+      {/* ---------- THE RECORD ---------- */}
       <motion.div variants={fade}>
         <div className="v2-history-head">
           <div>
-            <p className="v2-kicker">ACTIVITY / CAPTURED ARTIFACTS</p>
-            <h3>Transaction history</h3>
+            <p className="v2-kicker">THE RECORD / CAPTURED ARTIFACTS</p>
+            <h3 className="v3-record-title-serif">Every artifact, on the record</h3>
           </div>
           <RefreshLine refreshing={live.refreshing} refreshedAt={live.refreshedAt} onRefresh={() => void refreshLive()} />
         </div>
@@ -142,18 +154,19 @@ export function HomeScreen() {
             <span className="v2-glyph" aria-hidden="true">!</span>
             <span className="v2-c-label">PQ frame admission — not achieved</span>
             <span className="v2-c-chain" />
-            <span className="v2-c-hash"><span className="v2-dim">see Evidence</span></span>
+            <span className="v2-c-hash"><span className="v2-dim">the absence is stated, not decorated</span></span>
             <span className="v2-c-status"><StatusChip tone="amber">NOT ACHIEVED</StatusChip></span>
-            <span className="v2-c-link"><button type="button" className="button-quiet" onClick={() => setScreen("evidence")} aria-label="Open the Evidence screen">→</button></span>
+            <span className="v2-c-link"><button type="button" className="button-quiet" onClick={() => setScreen("evidence")} aria-label="Open the Evidence screen">see Evidence →</button></span>
           </div>
         </div>
       </motion.div>
 
+      {/* ---------- session intents ---------- */}
       <motion.div variants={fade}>
         <div className="v2-history-head">
           <div>
             <p className="v2-kicker">RECENT INTENTS / THIS SESSION</p>
-            <h3>Signed spend intents</h3>
+            <h3 className="v3-record-title-serif">Signed spend intents</h3>
           </div>
           <span className="v2-dim">{intents.length === 0 ? "none yet" : `${intents.length} recorded`}</span>
         </div>

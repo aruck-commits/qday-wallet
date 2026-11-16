@@ -50,7 +50,6 @@ export function ArchitectureScreen() {
           <h2>How the pieces fit</h2>
           <p className="screen-lede">Intent → proof → identity → mempools → public records, with pinned addresses. Hover or focus a node to copy its address.</p>
         </div>
-        <a className="unaudited-badge" href="https://github.com/aruck-commits/qday-wallet/blob/main/docs/VULNERABILITIES.md" target="_blank" rel="noreferrer">UNAUDITED CONTRACT STACK</a>
       </motion.div>
 
       <motion.div className="v2-arch-flow" variants={fade} aria-label="Architecture flow">
@@ -78,7 +77,7 @@ function FragmentManager({ node, index, showArrow }: { node: Node; index: number
         <span className="idx">NODE 0{index + 1}</span>
         <strong>
           {node.title}
-          {node.offline && <StatusChip tone="amber" title="Devnet gateway did not respond at last probe — nothing here is live">OFFLINE</StatusChip>}
+          {node.offline && <StatusChip tone="amber" title="Devnet gateway did not respond at last probe — nothing here is live"><i className="v2-dot v2-dot-amber" aria-hidden="true" />OFFLINE</StatusChip>}
         </strong>
         {node.lines.map((line) => (
           <small key={line}>{line}</small>

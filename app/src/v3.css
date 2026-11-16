@@ -1,0 +1,584 @@
+/* v3.css — Q-Day Wallet v3.0 ("the event") — editorial-neon layer.
+   Imported AFTER v2.css (order: style → screen-overrides → brand-font → chi → craft → v2 → v3).
+   Spec: specs/UI_SPEC_V3.md — §0 tokens · §2 shell · §3 Send · §4 Keys · §5 Home ·
+   §6 screens · §7 ambient · §8 motion · §9 honesty · §10 responsive.
+
+   The only gradients in the product: the two static body auras below. Nothing else. */
+
+:root {
+  /* §0 fixed design tokens — full re-declaration, wins over every earlier layer */
+  --bg: #0b0d11;
+  --panel: #12151c;
+  --panel2: #0e1116;
+  --line: #232833;
+  --line-strong: #323949;
+  --text: #eef1f6;
+  --muted: #8b93a3;
+  --mint: #7fdcb4;
+  --green: #7fdcb4;
+  --cyan: #7fdcb4;
+  --violet: #a78bfa;
+  --red: #f43f5e;
+  --amber: #e7b45c;
+  --ember: #ff9d5c; /* celebration/ledger-settled ONLY — never pending, never error */
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --r-screen: 6px;
+  --r-panel: 6px;
+  --r-window: 3px;
+  --r-button: 3px;
+  --r-chip: 2px;
+  --r-stamp: 0px;
+  --shadow-lift: 0 6px 16px rgba(4, 8, 12, 0.25);
+  --shadow-settle: 0 24px 60px rgba(0, 0, 0, 0.45);
+  --ease-qday: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ---------- backdrop: flat graphite + the two static auras (§7) ---------- */
+body {
+  background: var(--bg);
+}
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+  width: 900px;
+  height: 900px;
+  border-radius: 50%;
+}
+body::before {
+  left: 80%;
+  top: -10%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(127, 220, 180, 0.04) 0%, transparent 62%);
+}
+body::after {
+  left: 10%;
+  top: 110%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.03) 0%, transparent 62%);
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after { /* static already — kept for clarity */ }
+}
+
+/* content layers sit above auras + ambient canvas (canvas z 0, later in DOM) */
+.v2-shell { position: relative; z-index: 1; }
+
+/* ---------- §7 ambient canvas ---------- */
+.v3-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ---------- §0 type: serif display moments ---------- */
+.screen h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(30px, 4vw, 44px);
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+  margin: 6px 0 0;
+}
+.v3-serif { font-family: var(--serif); font-weight: 400; }
+.v3-serif-italic { font-family: var(--serif); font-style: italic; font-weight: 400; }
+.v3-display-xl {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(44px, 7vw, 76px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 14px 0 0;
+  color: var(--text);
+}
+.v3-display-xl em {
+  font-style: italic;
+  color: var(--mint);
+}
+.v3-lead-serif {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 32px);
+  line-height: 1.15;
+  color: var(--text);
+  margin: 0;
+}
+
+/* ---------- §2.1 brand wordmark ---------- */
+.v2-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.v2-brand .brand-mark { align-self: center; color: var(--mint); }
+.v3-brand-serif {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21px;
+  line-height: 1;
+  color: var(--text);
+}
+.v3-brand-grot {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- §2.2 session-key chip ---------- */
+.v3-sessionchip {
+  cursor: pointer;
+  min-height: 0;
+  padding: 5px 9px;
+  background: none;
+}
+.v3-sessionchip:hover { color: var(--text); }
+
+/* ---------- §2.3 footer honesty strip ---------- */
+.v2-footer { letter-spacing: 0.06em; text-transform: uppercase; }
+.v2-footer span:first-child { color: var(--muted); }
+.v2-footer a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.v2-footer a:hover { color: var(--text); }
+
+/* ---------- §3.2 stage rail ---------- */
+.v3-rail {
+  position: sticky;
+  top: 60px;
+  z-index: 5;
+  background: rgba(11, 13, 17, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+.v3-rail-inner { position: relative; }
+.v3-rail ol {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.v3-rail li { flex: 1 1 0; min-width: 0; }
+.v3-rail li > button,
+.v3-rail li > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 2px 0;
+  color: inherit;
+  cursor: default;
+}
+.v3-rail li > button { cursor: pointer; }
+.v3-rail li > button:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+}
+.v3-rail-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  background: var(--bg); /* masks the spine behind hollow dots */
+  position: relative;
+  z-index: 1;
+}
+.v3-rail-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.v3-rail-stage-future .v3-rail-dot { border-color: var(--line-strong); }
+.v3-rail-stage-active .v3-rail-dot {
+  background: var(--amber);
+  border-color: var(--amber);
+  animation: v2-pulse 1.6s ease-in-out infinite;
+}
+.v3-rail-stage-active .v3-rail-label { color: var(--amber); }
+.v3-rail-stage-done .v3-rail-dot { background: var(--mint); border-color: var(--mint); }
+.v3-rail-stage-done .v3-rail-label { color: var(--text); }
+.v3-rail li > button:hover .v3-rail-label { color: var(--mint); }
+
+.v3-rail-spine {
+  position: absolute;
+  top: 6px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--line-strong);
+}
+.v3-rail-spine-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--mint);
+  transform-origin: left;
+}
+
+/* ---------- §3.3 stage cards ---------- */
+.v3-stage {
+  border-left: 2px solid transparent;
+  transition: opacity 240ms var(--ease-qday);
+}
+.v3-stage-active {
+  border-left-color: var(--stage-accent, var(--amber));
+  opacity: 1;
+}
+.v3-stage-done { opacity: 0.55; }
+.v3-stage-done:hover { opacity: 0.8; }
+.v3-stage-future { opacity: 0.85; }
+.v3-stage-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.v3-stage-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--stage-accent, var(--muted));
+}
+
+.v3-scrolltarget { scroll-margin-top: 130px; }
+
+/* signature ink bar (§3.3 SIGN) */
+.v3-inkbar {
+  height: 3px;
+  margin-top: 10px;
+  background: rgba(4, 8, 12, 0.6);
+  border-radius: var(--r-chip);
+  overflow: hidden;
+}
+.v3-inkbar > i {
+  display: block;
+  height: 100%;
+  background: var(--violet);
+  transform-origin: left;
+}
+
+/* mini ledger stamps inside stage cards */
+.v3-ministamp { display: flex; justify-content: center; padding: 4px 0 2px; }
+
+/* mint footnote chip — the ONLY celebration an unsubmitted frame may earn (§9.2) */
+.v3-quietchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(127, 220, 180, 0.4);
+  border-radius: var(--r-chip);
+  color: var(--mint);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+}
+
+/* local verify mini stamp (FrameInspector) */
+.v3-verifystamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1.5px solid rgba(127, 220, 180, 0.55);
+  border-radius: var(--r-stamp);
+  color: var(--mint);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  transform: rotate(-2deg);
+}
+
+/* ---------- §3.5 settle plates ---------- */
+.v3-plate {
+  grid-column: 1 / -1;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-panel);
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  padding: 34px 26px 26px;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.v3-plate-mined {
+  border-color: rgba(255, 157, 92, 0.5);
+  box-shadow: var(--shadow-settle);
+}
+.v3-plate-offline {
+  border-color: rgba(231, 180, 92, 0.5);
+  background: rgba(231, 180, 92, 0.04);
+}
+.v3-plate-rejected {
+  border-color: rgba(244, 63, 94, 0.5);
+  background: rgba(244, 63, 94, 0.04);
+}
+.v3-plate-rosette {
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  width: 520px;
+  height: 520px;
+  margin-left: -260px;
+  pointer-events: none;
+}
+.v3-plate-stamp { position: relative; display: flex; justify-content: center; }
+.v3-plate-caption {
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.6;
+  margin: 0;
+}
+.v3-plate-body { margin: 0; font-size: 14px; line-height: 1.7; color: var(--text); max-width: 62ch; }
+.v3-plate-detail { color: var(--muted); font-family: var(--mono); font-size: 10px; overflow-wrap: anywhere; }
+.v3-plate-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.v3-plate-rows { border-top: 1px solid var(--line); margin-top: 6px; }
+.v3-plate-rows .v2-irow:first-of-type { border-top: 0; }
+/* Guard: raw JSON inside the plate never blows out to min-content width. */
+.v3-plate .raw-window { max-width: 100%; }
+.v3-plate .raw-window pre { overflow-x: auto; max-width: 100%; }
+
+/* Layout guard: the sticky inspect column must clear the sticky stage rail. */
+.v2-send-inspect { top: 118px; }
+
+/* ---------- §4 keys bytegrid ceremony ---------- */
+.v3-bytegrid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 5px;
+  margin-bottom: 14px;
+}
+.v3-bytegrid i { display: block; aspect-ratio: 1; border-radius: 1px; background: #171b22; }
+.v3-bytegrid-generating i {
+  background: rgba(231, 180, 92, 0.28) !important;
+  animation: v3-blink 0.9s ease-in-out infinite;
+}
+@keyframes v3-blink { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.85; } }
+
+.v3-fpreveal {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--violet);
+  letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
+  margin: 2px 0 0;
+  min-height: 16px;
+}
+.v3-fpreveal span { display: inline-block; }
+
+.v3-device-led { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+.v3-device-led.on {
+  background: var(--violet);
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.7); /* the one static LED glow (§4) */
+}
+.v3-device-led.generating { background: var(--amber); animation: v3-blink 0.9s ease-in-out infinite; }
+
+.v3-keys-rosette { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.v3-keys-rosette svg { width: 560px; height: 560px; opacity: 0.08; color: var(--violet); }
+.v3-keys-panelwrap { position: relative; }
+.v3-keys-panelwrap > .v2-panel { position: relative; }
+
+/* ---------- §5 home hero + ledger strip + capability cards ---------- */
+.v3-hero { position: relative; padding: clamp(30px, 6vh, 70px) 0 34px; }
+.v3-hero-rosette {
+  position: absolute;
+  right: -170px;
+  top: 46%;
+  width: 560px;
+  height: 560px;
+  transform: translateY(-50%);
+  color: var(--text);
+  opacity: 0.06;
+  pointer-events: none;
+}
+.v3-hero-sub {
+  max-width: 62ch;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 18px 0 0;
+}
+.v3-hero-cta { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+.v3-ledgerstrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 10px;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
+  padding: 13px 2px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.v3-ls-k {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: 7px;
+}
+.v3-ls-sep { color: rgba(139, 147, 163, 0.45); flex: 0 0 auto; }
+.v3-ls-dim { color: var(--muted); }
+.v3-ls-note { color: var(--muted); font-size: 10px; }
+
+.v3-caps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 26px 0;
+}
+.v3-cap {
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  background: var(--panel2);
+  padding: 20px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-width: 0;
+}
+.v3-cap-accent-violet { border-top: 2px solid var(--violet); }
+.v3-cap-accent-mint { border-top: 2px solid var(--mint); }
+.v3-cap-accent-amber { border-top: 2px solid var(--amber); }
+.v3-cap-statement {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.18;
+  margin: 0;
+  color: var(--text);
+}
+.v3-cap-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.v3-cap-foot { color: var(--muted); font-family: var(--mono); font-size: 10px; }
+
+.v3-record-title-serif {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  margin: 4px 0 0;
+}
+
+/* ---------- §6.3 evidence records timeline ---------- */
+.v3-recordlist { border-top: 1px solid var(--line-strong); }
+.v3-record {
+  display: grid;
+  gap: 10px;
+  padding: 22px 2px;
+  border-bottom: 1px solid var(--line);
+}
+.v3-record-date {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.v3-record-titlerow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.v3-record-title { font-size: 17px; font-weight: 500; letter-spacing: -0.005em; margin: 0; }
+.v3-record-verdict { margin: 0; font-size: 13px; line-height: 1.65; color: var(--muted); max-width: 78ch; }
+.v3-record-verdict .v2-mono { color: var(--text); font-size: 12px; }
+.v3-record-mint {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 32px);
+  color: var(--mint);
+  margin: 2px 0 0;
+  line-height: 1.1;
+}
+.v3-record-close {
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 4px 0 0;
+}
+.v3-evidence-close {
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+  padding-top: 16px;
+}
+
+/* ---------- §3.4 gas bars: 10px, one-shot fill ---------- */
+.v2-gasbar { height: 10px; border-radius: var(--r-chip); }
+.v3-gasfill { display: block; height: 100%; transform-origin: left; }
+
+/* ---------- editorial restyle helpers (§6.1/§6.2/§6.4) ---------- */
+.v3-editorial { border-left: 2px solid var(--line-strong); }
+.v3-plate-lite { border-left: 2px solid var(--line-strong); }
+.v2-arch-node strong { font-family: var(--serif); font-weight: 400; font-size: 18px; letter-spacing: 0; }
+.timeline-new p { font-family: var(--serif); font-weight: 400; font-size: 17px; letter-spacing: 0; }
+.v2-name-hero h2 { font-size: clamp(30px, 4vw, 44px); }
+
+/* unlisted-until-hover is preserved from v2 for arch nodes; nothing to add */
+
+/* ---------- §10 responsive (1279 / 767 / 479 consolidated) ---------- */
+@media (max-width: 1279px) {
+  .v3-hero-rosette { right: -240px; opacity: 0.05; }
+}
+
+@media (max-width: 1099px) {
+  .v2-send-grid, .v2-keys-grid, .v2-id-grid { grid-template-columns: 1fr; }
+  .v2-send-inspect { position: static; }
+}
+
+@media (max-width: 767px) {
+  .v3-rail { top: 96px; padding: 8px 8px; }
+  .v3-rail ol { overflow-x: auto; }
+  .v3-rail li { flex: 0 0 auto; min-width: 92px; }
+  .v3-rail li > button, .v3-rail li > div { align-items: flex-start; }
+  .v3-rail-dot { width: 8px; height: 8px; }
+  .v3-rail-label { font-size: 9px; letter-spacing: 0.1em; }
+  .v3-rail-spine { display: none; }
+  .v3-plate { padding: 26px 16px 20px; }
+  .v3-caps { grid-template-columns: 1fr; }
+  .v3-hero-rosette { right: -200px; width: 420px; height: 420px; }
+  .v2-send-inspect { top: 0; }
+}
+
+@media (max-width: 479px) {
+  .v3-ledgerstrip { font-size: 11px; }
+  .v3-ledgerstrip .v3-ls-sep { display: none; }
+  .v3-ledgerstrip > span { flex-basis: 100%; }
+  .v3-display-xl { font-size: clamp(38px, 10.5vw, 52px); }
+  .v3-keystats-1col .v2-keystats { grid-template-columns: 1fr; }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .v3-rail-stage-active .v3-rail-dot,
+  .v3-bytegrid-generating i,
+  .v3-device-led.generating { animation: none; }
+  .v3-stage { transition: none; }
+  .v2-gasbar > i, .v3-inkbar > i { transition: none; }
+}

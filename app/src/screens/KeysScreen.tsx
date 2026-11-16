@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { CopyChip } from "../components/CopyChip";
+import { CountNumber } from "../components/CountNumber";
 import { ExposureCard } from "../components/ExposureCard";
+import { LedgerStamp } from "../components/LedgerStamp";
 import { PassphraseModal } from "../components/PassphraseModal";
+import { Rosette } from "../components/Rosette";
 import evidenceJson from "../data/demoEvidence.json";
 import { PQ, hexlify, type Keyfile } from "../lib/pq";
 import { formatBytes, truncateHash } from "../lib/format";
@@ -12,6 +15,14 @@ const fade = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 const hexFragment = (bytes: Uint8Array | undefined, count: number) =>
   bytes ? hexlify(bytes.slice(0, count)) : "";
 
+/**
+ * Keys (UI spec §4) — the bytegrid is a fingerprint RITUAL: the 16×4 grid
+ * renders the first 64 hex nibbles of the REAL session-key fingerprint (cell
+ * brightness = nibble value → violet alpha 0.15–1.0), waves in at 6ms stagger,
+ * then the fingerprint wipes in character-by-char (18ms/char), the violet
+ * "Materialized." mini stamp lands, and KeyStats counts up from 0. All v2
+ * behavior (keyfile I/O, secret mask, confirms) is kept verbatim.
+ */
 export function KeysScreen() {
   const keypair = useWalletStore((state) => state.keypair);
   const fingerprint = useWalletStore((state) => state.fingerprint);
@@ -19,7 +30,7 @@ export function KeysScreen() {
   const forgetKey = useWalletStore((state) => state.forgetKey);
   const importKeyfile = useWalletStore((state) => state.importKeyfile);
   const exportKeyfile = useWalletStore((state) => state.exportKeyfile);
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotion() ?? false;
 
   const [busy, setBusy] = useState(false);
   const [modal, setModal] = useState<null | { mode: "export" } | { mode: "import"; file: Keyfile }>(null);
@@ -38,7 +49,12 @@ export function KeysScreen() {
     return () => window.clearTimeout(timer);
   }, [notice]);
 
-  const fpShort = fingerprint ? `sha256:${fingerprint.slice(0, 6)}…${fingerprint.slice(-6)}` : null;
+  // REAL fingerprint — walletStore's value is bare 64-hex; strip a sha256: prefix if present.
+  const fpHex = fingerprint?.replace(/^sha256:/, "") ?? null;
+  const nibbles = fpHex ? fpHex.slice(0, 64).split("") : null;
+  const fpShort = fpHex ? `sha256:${fpHex.slice(0, 6)}…${fpHex.slice(-6)}` : null;
+  const fpRevealChars = fpShort ? fpShort.split("") : [];
+
   // evidence.ts types rotation as {verdict, reason}; the committed JSON also carries the tx link.
   const rotation = evidenceJson.ens.rotation as { verdict: string; reason: string; txHash?: string; explorerUrl?: string; pqKeyVersion?: string };
 
@@ -88,6 +104,7 @@ export function KeysScreen() {
   };
 
   const deviceState = busy ? "GENERATING…" : keypair ? "SETTLED" : "IDLE";
+  const gridKey = busy ? "generating" : fpHex ?? "empty";
 
   return (
     <motion.section className="screen" initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: reduce ? 0 : 0.06 } } }}>
@@ -102,50 +119,97 @@ export function KeysScreen() {
 
       <motion.div className="v2-keys-grid" variants={fade}>
         <div className="v2-keys-left">
-          <div className="v2-panel" aria-label="Session key device">
-            <div className="v2-device-top">
-              <i className={`v2-device-led ${keypair ? "on" : ""}`} aria-hidden="true" />
-              SESSION KEY DEVICE
-              <span className="v2-device-state">{deviceState}</span>
-            </div>
-            <div className="v2-bytegrid" aria-hidden="true" key={fingerprint ?? "empty"}>
-              {Array.from({ length: 64 }, (_, index) => (
-                <i key={index} className={keypair ? "lit" : ""} style={keypair && !reduce ? { animationDelay: `${index * 6}ms` } : undefined} />
-              ))}
-            </div>
-            <div className="v2-irow"><b>pk fingerprint</b><span>{fpShort ?? "waiting — generate to reveal"}</span></div>
-            {fpShort && (
-              <div className="v2-irow"><b>copy</b><CopyChip value={fingerprint} display={fpShort} label="Copy the full public-key fingerprint" /></div>
-            )}
-            <div className="v2-secret-box">
-              <div className="v2-secret-row">
-                <b>secret key</b>
-                <span className="v2-secret-value">
-                  {secret === "shown" && keypair
-                    ? `${hexFragment(keypair.secretKey, 4)}…${hexFragment(keypair.secretKey.slice(-4), 4)}`
-                    : "••••••••…••••••••"}
-                </span>
-                {secret === "masked" && keypair && (
-                  <button type="button" className="button-quiet" onClick={() => setSecret("warn")} aria-label="Reveal secret key fragments">reveal</button>
-                )}
-                {secret === "shown" && (
-                  <button type="button" className="button-quiet" onClick={() => setSecret("masked")} aria-label="Mask the secret key again">mask</button>
-                )}
+          <div className="v3-keys-panelwrap">
+            <div className="v3-keys-rosette" aria-hidden="true"><Rosette spin={false} /></div>
+            <div className="v2-panel" aria-label="Session key device">
+              <div className="v2-device-top">
+                <i className={`v3-device-led ${busy ? "generating" : keypair ? "on" : ""}`} aria-hidden="true" />
+                SESSION KEY DEVICE
+                <span className="v2-device-state">{deviceState}</span>
               </div>
-              {secret === "warn" && (
-                <div role="alert">
-                  <p className="v2-note-amber">This reveals the first and last 4 bytes of the 2,560-byte secret on screen. It stays in this tab, but a shoulder-surf is a shoulder-surf.</p>
-                  <div className="v2-key-actions">
-                    <button type="button" className="button-quiet" onClick={() => setSecret("shown")}>Reveal anyway</button>
-                    <button type="button" className="button-quiet" onClick={() => setSecret("masked")}>Keep masked</button>
-                  </div>
+
+              {/* 16×4 bytegrid — first 64 hex nibbles of the REAL fingerprint */}
+              <div
+                key={gridKey}
+                className={`v3-bytegrid ${busy ? "v3-bytegrid-generating" : ""}`}
+                role="img"
+                aria-label="first 64 nibbles of the pk fingerprint, rendered as a grid"
+                title="first 64 nibbles of the pk fingerprint, rendered as a grid"
+              >
+                {Array.from({ length: 64 }, (_, index) => {
+                  const nibble = !busy && nibbles ? nibbles[index] : null;
+                  const value = nibble ? parseInt(nibble, 16) : 0;
+                  const alpha = 0.15 + (value / 15) * 0.85;
+                  return (
+                    <motion.i
+                      key={index}
+                      initial={busy || reduce || !nibble ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={busy || reduce || !nibble ? { duration: 0 } : { delay: index * 0.006, type: "spring", stiffness: 400, damping: 28 }}
+                      style={nibble ? { background: `rgba(167, 139, 250, ${alpha.toFixed(3)})` } : undefined}
+                    />
+                  );
+                })}
+              </div>
+
+              {/* fingerprint reveal — char-by-char after the wave */}
+              {fpHex && !busy && (
+                <p className="v3-fpreveal" aria-label={`pk fingerprint ${fpShort}`}>
+                  {fpRevealChars.map((char, index) => (
+                    <motion.span
+                      key={`${gridKey}-${index}`}
+                      initial={reduce ? { opacity: 1 } : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={reduce ? { duration: 0 } : { delay: 0.5 + index * 0.018, duration: 0.12 }}
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </p>
+              )}
+              {!fpHex && <p className="v3-fpreveal" style={{ color: "var(--muted)" }}>waiting — generate to reveal</p>}
+
+              {/* Materialized. mini stamp */}
+              {fpHex && !busy && (
+                <div className="v3-ministamp" style={{ margin: "12px 0 10px" }}>
+                  <LedgerStamp word="Materialized." subline="ML-DSA-44 · SESSION" tone="violet" width={96} mini delay={reduce ? 0 : 1.05} />
                 </div>
               )}
-            </div>
-            <div className="v2-keystats" aria-label="Key sizes">
-              <div><span>public key</span><strong>{formatBytes(PQ.pkBytes)}</strong></div>
-              <div><span>secret key</span><strong>{formatBytes(PQ.skBytes)} / masked</strong></div>
-              <div><span>signature</span><strong>{formatBytes(PQ.sigBytes)}</strong></div>
+
+              <div className="v2-irow"><b>pk fingerprint</b><span>{fpShort ?? "waiting — generate to reveal"}</span></div>
+              {fpShort && (
+                <div className="v2-irow"><b>copy</b><CopyChip value={fingerprint} display={fpShort} label="Copy the full public-key fingerprint" /></div>
+              )}
+              <div className="v2-secret-box">
+                <div className="v2-secret-row">
+                  <b>secret key</b>
+                  <span className="v2-secret-value">
+                    {secret === "shown" && keypair
+                      ? `${hexFragment(keypair.secretKey, 4)}…${hexFragment(keypair.secretKey.slice(-4), 4)}`
+                      : "••••••••…••••••••"}
+                  </span>
+                  {secret === "masked" && keypair && (
+                    <button type="button" className="button-quiet" onClick={() => setSecret("warn")} aria-label="Reveal secret key fragments">reveal</button>
+                  )}
+                  {secret === "shown" && (
+                    <button type="button" className="button-quiet" onClick={() => setSecret("masked")} aria-label="Mask the secret key again">mask</button>
+                  )}
+                </div>
+                {secret === "warn" && (
+                  <div role="alert">
+                    <p className="v2-note-amber">This reveals the first and last 4 bytes of the 2,560-byte secret on screen. It stays in this tab, but a shoulder-surf is a shoulder-surf.</p>
+                    <div className="v2-key-actions">
+                      <button type="button" className="button-quiet" onClick={() => setSecret("shown")}>Reveal anyway</button>
+                      <button type="button" className="button-quiet" onClick={() => setSecret("masked")}>Keep masked</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="v2-keystats" aria-label="Key sizes">
+                <div><span>public key</span><strong>{keypair && !reduce ? <CountNumber value={PQ.pkBytes} from={0} duration={600} reduce={false} format={(n) => formatBytes(Math.round(n))} /> : formatBytes(PQ.pkBytes)}</strong></div>
+                <div><span>secret key</span><strong>{keypair && !reduce ? <CountNumber value={PQ.skBytes} from={0} duration={600} format={(n) => `${formatBytes(Math.round(n))} / masked`} /> : `${formatBytes(PQ.skBytes)} / masked`}</strong></div>
+                <div><span>signature</span><strong>{keypair && !reduce ? <CountNumber value={PQ.sigBytes} from={0} duration={600} format={(n) => formatBytes(Math.round(n))} /> : formatBytes(PQ.sigBytes)}</strong></div>
+              </div>
             </div>
           </div>
 
@@ -187,7 +251,7 @@ export function KeysScreen() {
             {rotation.txHash && rotation.explorerUrl && (
               <a href={rotation.explorerUrl} target="_blank" rel="noreferrer">{truncateHash(rotation.txHash)} ↗</a>
             )}
-            {" "}· owner unchanged. The name never moved; only the key did.
+            {" "}· owner unchanged — the name never moved; only the key did.
           </div>
           <div className="v2-panel">
             <p className="v2-kicker">KEYFILE I/O</p>

@@ -52,7 +52,7 @@ export function IdentityScreen() {
       </motion.div>
 
       <motion.div className="v2-id-grid" variants={fade}>
-        <div className="v2-panel" aria-label="PQ record">
+        <div className="v2-panel v3-editorial" aria-label="PQ record">
           <div className="v2-panel-head">
             <div>
               <p className="v2-kicker">PQ RECORD / text/pq-key</p>
@@ -96,7 +96,7 @@ export function IdentityScreen() {
           </div>
         </div>
 
-        <div className="v2-panel" aria-label="Resolver details">
+        <div className="v2-panel v3-editorial" aria-label="Resolver details">
           <div className="v2-panel-head">
             <div>
               <p className="v2-kicker">RESOLVER</p>
@@ -114,7 +114,7 @@ export function IdentityScreen() {
         </div>
       </motion.div>
 
-      <motion.div className="v2-panel" style={{ marginTop: 16 }} variants={fade} aria-label="Rotation timeline">
+      <motion.div className="v2-panel v3-editorial" style={{ marginTop: 16 }} variants={fade} aria-label="Rotation timeline">
         <div className="v2-panel-head">
           <div>
             <p className="v2-kicker">KEY CONTINUITY TIMELINE</p>

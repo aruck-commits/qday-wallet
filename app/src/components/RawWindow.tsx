@@ -27,10 +27,13 @@ export function highlight(json: string): ReactNode[] {
  * Raw JSON window. v2: accepts ANY serializable value (not just RPC evidence),
  * and `flat` renders it as a divider-separated region instead of a bordered
  * sub-card (UI spec §6 — no card-in-card nesting).
+ * v3: `defaultOpen` — when false the window starts COLLAPSED (used by the
+ * Evidence record rows, spec §6.3); when true/omitted it starts expanded.
+ * Never rendered expanded by default in narrow plates: callers choose.
  */
-export function RawWindow({ title, value, flat = false }: { title: string; value: unknown; flat?: boolean }) {
+export function RawWindow({ title, value, flat = false, defaultOpen = true }: { title: string; value: unknown; flat?: boolean; defaultOpen?: boolean }) {
   return (
-    <details className={`raw-window ${flat ? "raw-flat" : ""}`} open>
+    <details className={`raw-window ${flat ? "raw-flat" : ""}`} open={defaultOpen ? true : undefined}>
       <summary><span className="window-dots"><i /><i /><i /></span><span>{title}</span><span className="window-toggle">toggle raw JSON</span></summary>
       <pre>{highlight(JSON.stringify(value, null, 2))}</pre>
     </details>

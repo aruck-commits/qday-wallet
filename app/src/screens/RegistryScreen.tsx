@@ -125,10 +125,11 @@ export function RegistryScreen() {
       <AnimatePresence>
         {passport.open && (
           <>
-            <motion.div className="v2-drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setPassport((prev) => ({ ...prev, open: false }))} />
+            <motion.div className="v2-drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.16 } }} onClick={() => setPassport((prev) => ({ ...prev, open: false }))} />
             <motion.aside
               className="v2-drawer" role="dialog" aria-label="Migration passport"
-              initial={reduce ? { opacity: 0 } : { x: 60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={reduce ? { opacity: 0 } : { x: 60, opacity: 0 }}
+              initial={reduce ? { opacity: 0 } : { x: 60, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+              exit={reduce ? { opacity: 0, transition: { duration: 0.16 } } : { x: 60, opacity: 0, transition: { duration: 0.16, ease: "easeOut" } }}
               transition={reduce ? { duration: 0.15 } : { type: "spring", stiffness: 300, damping: 30 }}
             >
               <div className="v2-drawer-head">

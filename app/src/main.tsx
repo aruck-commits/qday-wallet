@@ -1,12 +1,14 @@
 import "@fontsource-variable/space-grotesk";
 import "@fontsource/space-mono/400.css";
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChainStatusChips } from "./components/ChainStatusChips";
 import { CopyChip } from "./components/CopyChip";
+import { AmbientCanvas } from "./components/AmbientCanvas";
 import { NavIcon } from "./components/NavIcons";
-import { StatusChip } from "./components/StatusChip";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { useDemoStore, type Screen } from "./lib/demoStore";
 import { useWalletStore } from "./lib/walletStore";
@@ -19,6 +21,7 @@ import "./brand-font.css";
 import "./chi.css";
 import "./craft.css";
 import "./v2.css";
+import "./v3.css";
 
 const evidence = demoEvidenceJson as DemoEvidence;
 
@@ -72,26 +75,34 @@ function App() {
   const ActiveScreen = SCREENS[screen];
 
   return (
-    <div className="v2-shell">
-      <header className="v2-header">
-        <button className="v2-brand" onClick={() => navigate("home")} aria-label="Q-Day Wallet — go to Home">
-          <span className="brand-mark" aria-hidden="true">◈</span> Q-Day Wallet
-        </button>
-        <div className="v2-header-chips">
-          <ChainStatusChips />
-        </div>
-        <div className="v2-account">
-          <span
-            role="img"
-            className={`v2-dot ${hasSessionKey ? "v2-dot-mint v2-dot-pulse" : "v2-dot-amber v2-dot-hollow"}`}
-            aria-label={hasSessionKey ? "Session key loaded in this tab" : "No session key in this tab"}
-            title={hasSessionKey ? "Session key lives in this tab only" : "No session key in this tab"}
-          />
-          <span className="v2-account-name">qdaywallet.eth</span>
-          <CopyChip value={evidence.account.address} label="Copy account address" />
-          <StatusChip tone="violet">ML-DSA-44</StatusChip>
-        </div>
-      </header>
+    <>
+      <AmbientCanvas />
+      <div className="v2-shell">
+        <header className="v2-header">
+          <button className="v2-brand" onClick={() => navigate("home")} aria-label="Q-Day Wallet — go to Home">
+            <span className="brand-mark" aria-hidden="true">◈</span>
+            <span className="v3-brand-serif">Q-Day</span>
+            <span className="v3-brand-grot">Wallet</span>
+          </button>
+          <div className="v2-header-chips">
+            <ChainStatusChips />
+            {/* Session-key chip — the header's only PQ signal (spec §2.2). Click → Keys. */}
+            <button
+              type="button"
+              className={`v2-chip ${hasSessionKey ? "v2-chip-violet" : "v2-chip-amber"} v3-sessionchip`}
+              onClick={() => navigate("keys")}
+              aria-label={hasSessionKey ? "Session key loaded in this tab — open Keys" : "No session key — open Keys to generate one"}
+              title={hasSessionKey ? "Session key lives in this tab only — open Keys" : "Generate a session key in Keys"}
+            >
+              <i className={`v2-dot ${hasSessionKey ? "v2-dot-violet v2-dot-pulse" : "v2-dot-amber v2-dot-hollow"}`} aria-hidden="true" />
+              {hasSessionKey ? "ML-DSA-44 · session" : "NO SESSION KEY"}
+            </button>
+          </div>
+          <div className="v2-account">
+            <span className="v2-account-name">qdaywallet.eth</span>
+            <CopyChip value={evidence.account.address} head={6} tail={4} label="Copy account address" />
+          </div>
+        </header>
 
       <div className="v2-body">
         <nav className="v2-sidebar" aria-label="Primary">
@@ -108,7 +119,6 @@ function App() {
               </button>
             ))}
           </div>
-          <a className="v2-unaudited" href="https://github.com/aruck-commits/qday-wallet/blob/main/docs/VULNERABILITIES.md" target="_blank" rel="noreferrer">UNAUDITED CONTRACT STACK</a>
         </nav>
 
         <main className="v2-main">
@@ -130,10 +140,9 @@ function App() {
 
       <footer className="v2-footer">
         <span>
-          ML-DSA-44 verifies in {evidence.gas.measuredVerify} gas · alt-mempool evidence · contract
-          layer unaudited demo · transactions link to their explorers
+          TEST TOKENS ONLY · CONTRACT LAYER UNAUDITED · EVIDENCE LINKS TO EXPLORERS · ML-DSA-44 VERIFY = {evidence.gas.measuredVerify} GAS ·{" "}
+          <a href="https://github.com/aruck-commits/qday-wallet/blob/main/docs/VULNERABILITIES.md" target="_blank" rel="noreferrer">docs/VULNERABILITIES.md ↗</a>
         </span>
-        <a href="https://github.com/aruck-commits/qday-wallet/blob/main/docs/VULNERABILITIES.md" target="_blank" rel="noreferrer">Read limitations →</a>
       </footer>
 
       <nav className="v2-tabbar" aria-label="Primary (mobile)">
@@ -197,7 +206,8 @@ function App() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </>
   );
 }
 

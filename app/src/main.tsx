@@ -1,46 +1,210 @@
 import "@fontsource-variable/space-grotesk";
 import "@fontsource/space-mono/400.css";
-import { StrictMode } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import evidenceJson from "./data/demoEvidence.json";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ChainStatusChips } from "./components/ChainStatusChips";
+import { CopyChip } from "./components/CopyChip";
+import { NavIcon } from "./components/NavIcons";
+import { StatusChip } from "./components/StatusChip";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { useDemoStore, type Screen } from "./lib/demoStore";
+import { useWalletStore } from "./lib/walletStore";
 import type { DemoEvidence } from "./lib/evidence";
-import { S0Hero } from "./screens/S0Hero";
-import { S1WalletHome } from "./screens/S1WalletHome";
-import { S1Console } from "./screens/S1Console";
-import { S2Key } from "./screens/S2Key";
-import { S3Registry } from "./screens/S3Registry";
-import { S4Identity } from "./screens/S4Identity";
-import { S5Architecture } from "./screens/S5Architecture";
+import { NAV_ITEMS, SCREENS, LEGACY_ALIASES } from "./screens/screens";
+import demoEvidenceJson from "./data/demoEvidence.json";
 import "./style.css";
 import "./screen-overrides.css";
 import "./brand-font.css";
 import "./chi.css";
 import "./craft.css";
+import "./v2.css";
 
-const evidence = evidenceJson as DemoEvidence;
-const nav: { id: Screen; label: string }[] = [
-  { id: "hero", label: "Overview" }, { id: "home", label: "Wallet" }, { id: "console", label: "Compose" }, { id: "key", label: "Key" },
-  { id: "registry", label: "Registry" }, { id: "identity", label: "Identity" }, { id: "architecture", label: "Architecture" },
-];
+const evidence = demoEvidenceJson as DemoEvidence;
 
-function ScreenView({ screen, navigate }: { screen: Screen; navigate: (screen: Screen) => void }) {
-  if (screen === "home") return <S1WalletHome evidence={evidence} navigate={navigate}/>;
-  if (screen === "hero") return <S0Hero evidence={evidence} navigate={navigate}/>;
-  if (screen === "console") return <S1Console evidence={evidence}/>;
-  if (screen === "key") return <S2Key evidence={evidence}/>;
-  if (screen === "registry") return <S3Registry evidence={evidence}/>;
-  if (screen === "identity") return <S4Identity evidence={evidence}/>;
-  return <S5Architecture evidence={evidence}/>;
+const TAB_ITEMS = NAV_ITEMS.slice(0, 4);
+const SHEET_ITEMS = NAV_ITEMS.slice(4);
+const SHEET_SCREENS = new Set<Screen>(SHEET_ITEMS.map((item) => item.id));
+const SCREEN_IDS = new Set<string>(NAV_ITEMS.map((item) => item.id));
+
+/** Navigation: pushState keeps browser back/forward working (lib setScreen only replaceState). */
+function navigateWithHistory(setScreen: (screen: Screen) => void, screen: Screen) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("screen", screen);
+  window.history.pushState({ screen }, "", url.toString());
+  setScreen(screen);
 }
 
 function App() {
-  const { screen, activeChain, setScreen, setActiveChain } = useDemoStore();
-  const block = activeChain === "devnet" ? evidence.live.devnet.lastBlock : evidence.live.sepolia.latestBlock;
-  const chainBalance = activeChain === "devnet" ? evidence.live.devnet.balanceEth : null;
-  const asOf = new Date(evidence.generatedAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" });
-  return <div className="app-shell"><header className="account-header"><button className="brand" onClick={() => setScreen("home")}><span className="brand-mark">◈</span> Q-Day Wallet</button><div className="chain-switcher" aria-label="Evidence chain"><button className={activeChain === "devnet" ? "chain-active" : ""} onClick={() => setActiveChain("devnet")}>DEVNET <b>1337</b></button><button className={activeChain === "sepolia" ? "chain-active" : ""} onClick={() => setActiveChain("sepolia")}>SEPOLIA <b>11155111</b></button></div><div className="account-meta">{chainBalance && <span className="balance-chip">{chainBalance} ETH</span>}<span className="account-chip">{evidence.account.address.slice(0, 6)}…{evidence.account.address.slice(-4)} <b>ML-DSA-44</b></span><span className="block-ticker"><i/> block {block?.toLocaleString("en-IN") ?? "—"}</span></div></header><div className="evidence-caption">Chain data read at build time · as of {asOf} IST · refreshed on each deploy</div><nav className="tab-rail" aria-label="Demo screens">{nav.map((item) => <button key={item.id} className={screen === item.id ? "tab-active" : ""} onClick={() => setScreen(item.id)}>{item.label}</button>)}</nav><main className="content-grid"><ScreenView screen={screen} navigate={setScreen}/></main><footer className="limitation-strip"><span>{evidence.protocol.name} verifies in {evidence.gas.measuredVerify} gas · alt-mempool evidence</span><span>contract layer unaudited demo</span><span>transactions link to their explorers</span></footer></div>;
+  const screen = useDemoStore((state) => state.screen);
+  const setScreen = useDemoStore((state) => state.setScreen);
+  const hasSessionKey = useWalletStore((state) => state.keypair) !== null;
+  const reduce = useReducedMotion() ?? false;
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const navigate = (next: Screen) => {
+    setSheetOpen(false);
+    navigateWithHistory(setScreen, next);
+  };
+
+  useEffect(() => {
+    const onPopState = () => {
+      const raw = new URLSearchParams(window.location.search).get("screen");
+      if (!raw) return;
+      const target: Screen | null = SCREEN_IDS.has(raw)
+        ? (raw as Screen)
+        : LEGACY_ALIASES[raw] ?? null;
+      if (target) setScreen(target);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [setScreen]);
+
+  useEffect(() => {
+    if (!sheetOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSheetOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sheetOpen]);
+
+  const ActiveScreen = SCREENS[screen];
+
+  return (
+    <div className="v2-shell">
+      <header className="v2-header">
+        <button className="v2-brand" onClick={() => navigate("home")} aria-label="Q-Day Wallet — go to Home">
+          <span className="brand-mark" aria-hidden="true">◈</span> Q-Day Wallet
+        </button>
+        <div className="v2-header-chips">
+          <ChainStatusChips />
+        </div>
+        <div className="v2-account">
+          <span
+            role="img"
+            className={`v2-dot ${hasSessionKey ? "v2-dot-mint v2-dot-pulse" : "v2-dot-amber v2-dot-hollow"}`}
+            aria-label={hasSessionKey ? "Session key loaded in this tab" : "No session key in this tab"}
+            title={hasSessionKey ? "Session key lives in this tab only" : "No session key in this tab"}
+          />
+          <span className="v2-account-name">qdaywallet.eth</span>
+          <CopyChip value={evidence.account.address} label="Copy account address" />
+          <StatusChip tone="violet">ML-DSA-44</StatusChip>
+        </div>
+      </header>
+
+      <div className="v2-body">
+        <nav className="v2-sidebar" aria-label="Primary">
+          <div className="v2-sidebar-nav">
+            {NAV_ITEMS.map((item) => (
+              <button
+                key={item.id}
+                className={`v2-navitem ${screen === item.id ? "v2-active" : ""}`}
+                onClick={() => navigate(item.id)}
+                aria-current={screen === item.id ? "page" : undefined}
+              >
+                <NavIcon name={item.icon} />
+                <span className="v2-navlabel">{item.label}</span>
+              </button>
+            ))}
+          </div>
+          <a className="v2-unaudited" href="https://github.com/aruck-commits/qday-wallet/blob/main/docs/VULNERABILITIES.md" target="_blank" rel="noreferrer">UNAUDITED CONTRACT STACK</a>
+        </nav>
+
+        <main className="v2-main">
+          <div className="v2-content">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={screen}
+                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: reduce ? 0 : -6, transition: { duration: reduce ? 0 : 0.15 } }}
+                transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 260, damping: 26 }}
+              >
+                <ActiveScreen />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </main>
+      </div>
+
+      <footer className="v2-footer">
+        <span>
+          ML-DSA-44 verifies in {evidence.gas.measuredVerify} gas · alt-mempool evidence · contract
+          layer unaudited demo · transactions link to their explorers
+        </span>
+        <a href="https://github.com/aruck-commits/qday-wallet/blob/main/docs/VULNERABILITIES.md" target="_blank" rel="noreferrer">Read limitations →</a>
+      </footer>
+
+      <nav className="v2-tabbar" aria-label="Primary (mobile)">
+        {TAB_ITEMS.map((item) => (
+          <button
+            key={item.id}
+            className={screen === item.id ? "v2-active" : ""}
+            onClick={() => navigate(item.id)}
+            aria-current={screen === item.id ? "page" : undefined}
+          >
+            <NavIcon name={item.icon} />
+            <span>{item.label}</span>
+          </button>
+        ))}
+        <button
+          className={SHEET_SCREENS.has(screen) ? "v2-active" : ""}
+          onClick={() => setSheetOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={sheetOpen}
+        >
+          <NavIcon name="more" />
+          <span>More</span>
+        </button>
+      </nav>
+
+      <AnimatePresence>
+        {sheetOpen && (
+          <motion.div
+            key="more-backdrop"
+            className="v2-sheet-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: reduce ? 0 : 0.15 } }}
+            onClick={() => setSheetOpen(false)}
+          />
+        )}
+        {sheetOpen && (
+          <motion.div
+            key="more-sheet"
+            className="v2-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label="More screens"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
+            animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reduce ? 0 : 24, transition: { duration: reduce ? 0 : 0.18 } }}
+            transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 260, damping: 26 }}
+          >
+            <p className="v2-kicker">MORE SCREENS</p>
+            {SHEET_ITEMS.map((item) => (
+              <button
+                key={item.id}
+                className={`v2-navitem ${screen === item.id ? "v2-active" : ""}`}
+                onClick={() => navigate(item.id)}
+                aria-current={screen === item.id ? "page" : undefined}
+              >
+                <NavIcon name={item.icon} />
+                <span className="v2-navlabel">{item.label}</span>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
 
-createRoot(document.getElementById("root")!).render(<StrictMode><ErrorBoundary><App/></ErrorBoundary></StrictMode>);
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  </StrictMode>
+);

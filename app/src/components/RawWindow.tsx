@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import type { RawEvidence } from "../lib/evidence";
 
 const TOKEN = /("(?:\\.|[^"\\])*")(\s*:)?|(-?\d+(?:\.\d+)?)|\b(true|false)\b|\bnull\b/g;
 
@@ -24,6 +23,16 @@ export function highlight(json: string): ReactNode[] {
   return nodes;
 }
 
-export function RawWindow({ title, value }: { title: string; value: RawEvidence }) {
-  return <details className="raw-window" open><summary><span className="window-dots"><i/><i/><i/></span><span>{title}</span><span className="window-toggle">toggle raw JSON</span></summary><pre>{highlight(JSON.stringify(value, null, 2))}</pre></details>;
+/**
+ * Raw JSON window. v2: accepts ANY serializable value (not just RPC evidence),
+ * and `flat` renders it as a divider-separated region instead of a bordered
+ * sub-card (UI spec §6 — no card-in-card nesting).
+ */
+export function RawWindow({ title, value, flat = false }: { title: string; value: unknown; flat?: boolean }) {
+  return (
+    <details className={`raw-window ${flat ? "raw-flat" : ""}`} open>
+      <summary><span className="window-dots"><i /><i /><i /></span><span>{title}</span><span className="window-toggle">toggle raw JSON</span></summary>
+      <pre>{highlight(JSON.stringify(value, null, 2))}</pre>
+    </details>
+  );
 }

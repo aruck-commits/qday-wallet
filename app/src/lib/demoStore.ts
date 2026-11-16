@@ -1,30 +1,41 @@
 import { create } from "zustand";
 
-export type Screen = "home" | "hero" | "console" | "key" | "registry" | "identity" | "architecture";
+export type Screen = "home" | "send" | "keys" | "identity" | "registry" | "evidence" | "architecture";
 
-const screenIds: Screen[] = ["hero", "home", "console", "key", "registry", "identity", "architecture"];
-const initialScreen = (): Screen => { if (typeof window === "undefined") return "hero"; const requested = new URLSearchParams(window.location.search).get("screen"); return screenIds.includes(requested as Screen) ? (requested as Screen) : "hero"; };
+const screenIds: Screen[] = ["home", "send", "keys", "identity", "registry", "evidence", "architecture"];
+
+/** Legacy ?screen= ids from the v1 demo map onto their v2 equivalents. */
+const legacyAliases: Record<string, Screen> = {
+  hero: "home",
+  console: "send",
+  key: "keys",
+  wallet: "home",
+  compose: "send",
+};
+
+const initialScreen = (): Screen => {
+  if (typeof window === "undefined") return "home";
+  const requested = new URLSearchParams(window.location.search).get("screen");
+  if (requested && screenIds.includes(requested as Screen)) return requested as Screen;
+  if (requested && legacyAliases[requested]) return legacyAliases[requested];
+  return "home";
+};
 
 type DemoState = {
   screen: Screen;
-  activeChain: "devnet" | "sepolia";
-  runnerStep: number;
-  running: boolean;
   setScreen: (screen: Screen) => void;
-  setActiveChain: (activeChain: "devnet" | "sepolia") => void;
-  setRunnerStep: (runnerStep: number) => void;
-  setRunning: (running: boolean) => void;
   reset: () => void;
 };
 
 export const useDemoStore = create<DemoState>((set) => ({
   screen: initialScreen(),
-  activeChain: "devnet",
-  runnerStep: 0,
-  running: false,
-  setScreen: (screen) => set({ screen }),
-  setActiveChain: (activeChain) => set({ activeChain }),
-  setRunnerStep: (runnerStep) => set({ runnerStep }),
-  setRunning: (running) => set({ running }),
-  reset: () => set({ screen: "home", runnerStep: 0, running: false }),
+  setScreen: (screen) => {
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("screen", screen);
+      window.history.replaceState(null, "", url.toString());
+    }
+    set({ screen });
+  },
+  reset: () => set({ screen: "home" }),
 }));

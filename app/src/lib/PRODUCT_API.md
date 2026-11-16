@@ -68,6 +68,9 @@ DEVNET   // { gateway, chainId 1337, explorerTx(hash) }
 readSepoliaLive(): { online, blockNumber, balances: { hooked, participant } (ETH strings), error }
 readEnsPqRecord(): { online, value (the sha256 fingerprint stored on-chain), resolver, node, textKey, error }
 probeDevnetGateway(): { online, chainId, error }   // expected OFFLINE post-hackathon
+probeDevnetReceipt(hash): { online, blockNumber, error }  // eth_getTransactionReceipt vs the gateway;
+                                                  // blockNumber non-null ONLY on a real mined receipt → "Settled"
+                                                  // tier; null → "Admitted" (hash-only) tier. Never fake a block.
 readArkivEntity(): { online, key, owner, attributes: { scheme, status, pqKeyVersion, swarmRef }, expiresAtBlock, error }
 queryArkivMigration(): { online, keys, block, error }
 ```

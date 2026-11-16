@@ -12,6 +12,7 @@
     "@forshtat/hegota-support": "0.0.1",
     "@fontsource-variable/space-grotesk": "^5.3.0",
     "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
     "@fontsource/space-mono": "^5.3.0",
     "@noble/post-quantum": "0.5.4",
     "@vitejs/plugin-react": "6.2.1",

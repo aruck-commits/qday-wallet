@@ -122,6 +122,37 @@ function valueLengthPrefixed(hex: string): string | null {
 
 export type DevnetStatus = { online: boolean; chainId: string | null; error: string | null };
 
+/**
+ * Follow-up receipt probe for a submitted frame: `eth_getTransactionReceipt`
+ * against the gateway. `blockNumber` is non-null ONLY when the chain itself
+ * reports the tx as mined — the UI may print "Settled" + block number from
+ * this read; a null means "Admitted" (hash only, no block claim).
+ */
+export type DevnetReceipt = { online: boolean; blockNumber: number | null; error: string | null };
+
+export async function probeDevnetReceipt(hash: string): Promise<DevnetReceipt> {
+  try {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 8_000);
+    const response = await fetch(DEVNET.gateway, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_getTransactionReceipt", params: [hash] }),
+      signal: controller.signal,
+    });
+    window.clearTimeout(timeout);
+    const body = (await response.json()) as { result?: { blockNumber?: string } | null; error?: unknown };
+    if (body.result && typeof body.result.blockNumber === "string") {
+      const blockNumber = Number.parseInt(body.result.blockNumber, body.result.blockNumber.startsWith("0x") ? 16 : 10);
+      if (Number.isFinite(blockNumber)) return { online: true, blockNumber, error: null };
+    }
+    // Gateway reachable, receipt absent → not yet mined (or not admitted).
+    return { online: true, blockNumber: null, error: null };
+  } catch (error) {
+    return { online: false, blockNumber: null, error: String(error).slice(0, 200) };
+  }
+}
+
 /** The EIP-8141 workshop devnet ran for the hackathon; it may be retired now. */
 export async function probeDevnetGateway(): Promise<DevnetStatus> {
   try {

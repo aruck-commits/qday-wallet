@@ -26,3 +26,8 @@ coverage.json
 Thumbs.db
 .vscode/
 app/dist-vercel/
+
+# vercel deploy temp copies (dir must be named exactly like the target project
+# for CLI directory-name matching — never commit these)
+app/q-day-wallet/
+app/q-day-wallet-vercel/
